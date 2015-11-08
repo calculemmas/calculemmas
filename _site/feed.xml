@@ -2,12 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Your awesome title</title>
-    <description>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.
-</description>
+    <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 07 Nov 2015 23:49:10 -0500</pubDate>
-    <lastBuildDate>Sat, 07 Nov 2015 23:49:10 -0500</lastBuildDate>
+    <pubDate>Sun, 08 Nov 2015 12:13:51 -0500</pubDate>
+    <lastBuildDate>Sun, 08 Nov 2015 12:13:51 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
     
       <item>
@@ -82,8 +81,8 @@ var chart = c3.generate({
 
 </description>
         <pubDate>Thu, 05 Nov 2015 10:35:55 -0500</pubDate>
-        <link>http://yourdomain.com/jekyll/update/2015/11/05/welcome-to-jekyll.html</link>
-        <guid isPermaLink="true">http://yourdomain.com/jekyll/update/2015/11/05/welcome-to-jekyll.html</guid>
+        <link>http://yourdomain.com/posts/welcome-to-jekyll</link>
+        <guid isPermaLink="true">http://yourdomain.com/posts/welcome-to-jekyll</guid>
         
         
         <category>jekyll</category>
