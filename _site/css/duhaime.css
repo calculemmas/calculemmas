@@ -89,7 +89,7 @@ header .logo:hover {
     }
 }
 .content p code {
-    background-color: #fff2E6;
+    background-color: #fbf4e0;
     padding: 2px 4px;
     color: #0e5279
 }
@@ -98,7 +98,7 @@ header .logo:hover {
     min-width: 110%;
     max-width: 110%;
     margin-left: -5%;
-    background-color: #fff2E6;
+    background-color: #fbf4e0;
     border-radius: 5px;
     color: #cd6602
 }
@@ -159,7 +159,7 @@ header .logo:hover {
     width: 110% !important
 }
 .content .aside {
-    background-color: #fff2E6;
+    background-color: #fbf4e0;
     padding: 10px 15px;
     color: #1a898a;
     font-size: .75rem;
@@ -203,7 +203,7 @@ header .logo:hover {
     float: right;
     font-size: 12px;
     text-transform: uppercase;
-    color: #A7DBDB;
+    color: #0e5279;
     line-height: 24px
 }
 @media (max-width: 57em) {
