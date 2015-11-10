@@ -2,8 +2,7 @@
 layout: default
 ---
 
-<div class="container content">
-  <ul class="recent-posts">
+<ul class="recent-posts">
   {% for post in site.posts %}
     {% unless post.next %}
 	<h2>{{ post.date | date: '%Y' }}</h2>
@@ -27,5 +26,4 @@ layout: default
     </li>
   {% endfor %}
 
-  </ul>
-</div>
+</ul>
