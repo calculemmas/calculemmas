@@ -4,12 +4,4 @@ title: About
 permalink: /about/
 ---
 
-This is the base Jekyll theme. You can find out more info about customizing your Jekyll theme, as well as basic Jekyll usage documentation at [jekyllrb.com](http://jekyllrb.com/)
-
-You can find the source code for the Jekyll new theme at:
-{% include icon-github.html username="jglovier" %} /
-[jekyll-new](https://github.com/jglovier/jekyll-new)
-
-You can find the source code for Jekyll at
-{% include icon-github.html username="jekyll" %} /
-[jekyll](https://github.com/jekyll/jekyll)
+Hi and welcome to my site. I'm a doctoral candidate at the University of Notre Dame and the Text and Data Mining Product Manager at ProQuest in Ann Arbor. I created this site to share some of my working notes, code, and preliminary findings with other researchers, in the hopes that doing so might generate collaborative dialogue. I hope you'll leave a comment or get in touch!
