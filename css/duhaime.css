@@ -36,7 +36,7 @@ header .logo:hover {
 }
 .container {
     margin: 0 auto;
-    max-width: 32rem
+    max-width: 34rem
 }
 .container hr {
     border: 0;
@@ -91,7 +91,7 @@ header .logo:hover {
 .content p code {
     background-color: #fbf4e0;
     padding: 2px 4px;
-    color: #0e5279
+    color: #0e5279;
 }
 .content blockquote {
     position: relative;
@@ -178,7 +178,7 @@ header .logo:hover {
 }
 .hero h1.display_title {
     margin-top: 0;
-    font-size: 40px;
+    font-size: 34px;
     display: inline-block;
     padding: 0 25px;
     color: #eb7260;
@@ -352,7 +352,7 @@ footer {
 }
 @media (min-width: 38em) {
     html {
-        font-size: 20px
+        font-size: 19px
     }
 }
 .highlight {
@@ -360,7 +360,7 @@ footer {
     max-width: 110%;
     margin-left: -5%;
     border-radius: 5px;
-    background-color: #fbfbfb;
+    background-color: #F3F1F1;
     font-size: 16px;
     overflow: hidden;
     text-shadow: none;
