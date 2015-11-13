@@ -2,7 +2,7 @@
 layout: post
 title:  "Clustering Semantic Vectors"
 date:   2015-09-12 10:24:24 -0500
-categories: jekyll update
+categories: word-embeddings clustering
 ---
 
 Google's Word2Vec and Stanford's GloVe have recently offered two fantastic open source software packages capable of transposing words into a high dimension vector space. In both cases, a vector's position within the high dimensional space gives a good indication of the word's semantic class (among other things), and in both cases these vector positions can be used in a variety of applications. In the post below, I'll discuss one approach you can take to clustering the vectors into coherent semantic groupings. 
@@ -28,7 +28,7 @@ sandberger 0.429191 -0.296897 0.15011 [...] -0.0590532
 
 Each new line contains a token followed by 300 signed floats, and those values appear to be organized from most to least common. Given this ready format, it's fairly straightforward to get straight to clustering!
 
-There are a variety of methods for clustering vectors, including density-based clustering, hierarchical clustering, and centroid clustering. One of the most intuitive and most commonly used centroid-based methods is K-Means. Given a collection of points in a space, K-Means uses a Hunger Games style random lottery to pick a few lucky points (colored green below), then assigns each of the non-lucky points to the lucky point to which it's closest. Using these preliminary groupings, the next step is to find the "centroid" (or geometric center) of each group, using the same technique one would use to find the center of a square. These centroids become the new lucky points, and again each non-lucky point is again assigned to the lucky point to which it's closest. This process continues until the centroids settle down and stop moving, after which the clustering is complete. Here's a nice visual description of K-Means [source][kmeans-source]:
+There are a variety of methods for clustering vectors, including density-based clustering, hierarchical clustering, and centroid clustering. One of the most intuitive and most commonly used centroid-based methods is K-Means. Given a collection of points in a space, K-Means uses a Hunger Games style random lottery to pick a few lucky points (colored green below), then assigns each of the non-lucky points to the lucky point to which it's closest. Using these preliminary groupings, the next step is to find the "centroid" (or geometric center) of each group, using the same technique one would use to find the center of a square. These centroids become the new lucky points, and again each non-lucky point is again assigned to the lucky point to which it's closest. This process continues until the centroids settle down and stop moving, after which the clustering is complete. Here's a nice visual description of K-Means [[source]][kmeans-source]:
 
 <img src='/images/post_images/clustering_semantic_vectors/kmeans.gif' id='gif'/>
 
