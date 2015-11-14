@@ -3,10 +3,10 @@
   <channel>
     <title>Doug Duhaime</title>
     <description>Working notes on data mining and early book history.</description>
-    <link>http://yourdomain.com//</link>
-    <atom:link href="http://yourdomain.com//feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 14 Nov 2015 12:57:20 -0500</pubDate>
-    <lastBuildDate>Sat, 14 Nov 2015 12:57:20 -0500</lastBuildDate>
+    <link>http://yourdomain.com/</link>
+    <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Sat, 14 Nov 2015 12:54:32 -0500</pubDate>
+    <lastBuildDate>Sat, 14 Nov 2015 12:54:32 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
     
       <item>
@@ -146,8 +146,8 @@ import sys, codecs, numpy&lt;/code&gt;&lt;/pre&gt;
 
 </description>
         <pubDate>Sat, 12 Sep 2015 11:24:24 -0400</pubDate>
-        <link>http://yourdomain.com//posts/clustering-semantic-vectors</link>
-        <guid isPermaLink="true">http://yourdomain.com//posts/clustering-semantic-vectors</guid>
+        <link>http://yourdomain.com/posts/clustering-semantic-vectors</link>
+        <guid isPermaLink="true">http://yourdomain.com/posts/clustering-semantic-vectors</guid>
         
         
         <category>word-embeddings</category>
@@ -322,8 +322,8 @@ for v in [v2,v3]:
 
 </description>
         <pubDate>Sun, 19 Jul 2015 11:24:24 -0400</pubDate>
-        <link>http://yourdomain.com//posts/crosslingual-plagiarism-detection</link>
-        <guid isPermaLink="true">http://yourdomain.com//posts/crosslingual-plagiarism-detection</guid>
+        <link>http://yourdomain.com/posts/crosslingual-plagiarism-detection</link>
+        <guid isPermaLink="true">http://yourdomain.com/posts/crosslingual-plagiarism-detection</guid>
         
         
         <category>jekyll</category>

@@ -9,11 +9,11 @@
 title: Doug Duhaime
 email: douglas.duhaime@gmail.com
 description: Working notes on data mining and early book history.
-baseurl: / # the subpath of your site, e.g. /blog
+baseurl: # the subpath of your site, e.g. /blog
 url: "http://yourdomain.com" # the base hostname & protocol for your site
 twitter_username: douglasduhaime
 github_username:  duhaime
-permalink: '/posts/:title'
+permalink: /posts/:title
 
 # Build settings
 markdown: kramdown
