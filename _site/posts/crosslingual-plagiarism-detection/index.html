@@ -20,8 +20,8 @@
   <script src="/js/prism.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/prism.css">
 
-  <link rel="canonical" href="http://yourdomain.com//posts/crosslingual-plagiarism-detection">
-  <link rel="alternate" type="application/rss+xml" title="Doug Duhaime" href="http://yourdomain.com//feed.xml">
+  <link rel="canonical" href="http://yourdomain.com/posts/crosslingual-plagiarism-detection">
+  <link rel="alternate" type="application/rss+xml" title="Doug Duhaime" href="http://yourdomain.com/feed.xml">
 </head>
 
 
@@ -170,7 +170,7 @@ for v in [v2,v3]:
 
 <h4>FEATURE SELECTION: SYNTACTIC SIMILARITY</h4>
 
-<p>Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following:</p>
+<p>Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following: </p>
 
 <div>
   <pre data-line=""><code class="language-python">[(u&#39;Newton&#39;, u&#39;NNP&#39;), (u&#39;appeared&#39;, u&#39;VBD&#39;),...,(u&#39;amazing&#39;, u&#39;JJ&#39;), (u&#39;.&#39;, u&#39;.&#39;)]
