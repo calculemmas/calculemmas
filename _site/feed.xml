@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Doug Duhaime</title>
+    <title>Douglas Duhaime</title>
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 14 Nov 2015 15:25:12 -0500</pubDate>
-    <lastBuildDate>Sat, 14 Nov 2015 15:25:12 -0500</lastBuildDate>
-    <generator>Jekyll v2.4.0</generator>
+    <pubDate>Sat, 14 Nov 2015 19:59:45 -0500</pubDate>
+    <lastBuildDate>Sat, 14 Nov 2015 19:59:45 -0500</lastBuildDate>
+    <generator>Jekyll v3.0.0</generator>
     
       <item>
         <title>Clustering Semantic Vectors</title>
-        <description>&lt;p&gt;Google’s Word2Vec and Stanford’s GloVe have recently offered two fantastic open source software packages capable of transposing words into a high dimension vector space. In both cases, a vector’s position within the high dimensional space gives a good indication of the word’s semantic class (among other things), and in both cases these vector positions can be used in a variety of applications. In the post below, I’ll discuss one approach you can take to clustering the vectors into coherent semantic groupings. &lt;/p&gt;
+        <description>&lt;p&gt;Google’s Word2Vec and Stanford’s GloVe have recently offered two fantastic open source software packages capable of transposing words into a high dimension vector space. In both cases, a vector’s position within the high dimensional space gives a good indication of the word’s semantic class (among other things), and in both cases these vector positions can be used in a variety of applications. In the post below, I’ll discuss one approach you can take to clustering the vectors into coherent semantic groupings.&lt;/p&gt;
 
 &lt;p&gt;Both Word2Vec and GloVe can create vector spaces given a large training corpus, but both maintain pretrained vectors as well. To get started with ~1GB of pretrained vectors from GloVe, one need only run the following lines:&lt;/p&gt;
 
@@ -280,7 +280,7 @@ for v in [v2,v3]:
 
 &lt;h4&gt;FEATURE SELECTION: SYNTACTIC SIMILARITY&lt;/h4&gt;
 
-&lt;p&gt;Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following: &lt;/p&gt;
+&lt;p&gt;Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following:&lt;/p&gt;
 
 &lt;div&gt;
   &lt;pre data-line=&quot;&quot;&gt;&lt;code class=&quot;language-python&quot;&gt;[(u&amp;#39;Newton&amp;#39;, u&amp;#39;NNP&amp;#39;), (u&amp;#39;appeared&amp;#39;, u&amp;#39;VBD&amp;#39;),...,(u&amp;#39;amazing&amp;#39;, u&amp;#39;JJ&amp;#39;), (u&amp;#39;.&amp;#39;, u&amp;#39;.&amp;#39;)]

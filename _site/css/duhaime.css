@@ -178,7 +178,7 @@ header .logo:hover {
 }
 .hero h1.display_title {
     margin-top: 0;
-    font-size: 34px;
+    font-size: 30px;
     display: inline-block;
     padding: 0 25px;
     color: #eb7260;
@@ -298,8 +298,8 @@ h6 {
     margin-top: 3rem
 }
 .content h1 {
-    line-height: 36px;
-    font-size: 36px;
+    line-height: 24px;
+    font-size: 24px;
     padding-bottom: 20px
 }
 b,
