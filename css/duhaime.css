@@ -13,7 +13,7 @@ body.full footer {
     display: none
 }
 img {
-    border: 0
+    border: 0;
 }
 header .logo {
     opacity: .75;
@@ -609,3 +609,10 @@ footer {
     color: #0000DD;
     font-weight: bold
 }
+
+
+
+#img-link{
+  text-decoration:none;
+}
+
