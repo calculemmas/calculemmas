@@ -5,8 +5,8 @@
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 15 Nov 2015 11:00:53 -0500</pubDate>
-    <lastBuildDate>Sun, 15 Nov 2015 11:00:53 -0500</lastBuildDate>
+    <pubDate>Sun, 15 Nov 2015 12:07:41 -0500</pubDate>
+    <lastBuildDate>Sun, 15 Nov 2015 12:07:41 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
     
       <item>
@@ -343,7 +343,7 @@ for v in [v2,v3]:
 
 &lt;p&gt;One of the debates surrounding the Act of Anne concerns the degree to which the statute altered the geography of the English book trade. Prior to the passage of the Act, legal historian Diane Zimmerman notes, the Stationers’ Company dominated the book industry, and because the company’s printers were primarily stationed in London, the book trade was also centered in the metropole. With the passage of the Statute of Anne, however, authors could sell or trade their copyrights to printers outside of London: “Now any printer [or] bookseller, wherever located within the country, could register a copyright with the Company” and “since purchasers of the copies could be located anywhere in the United Kingdom, the Stationers’ Company did not regain its monopoly [on the book trade]” (7). Contra Zimmerman, William Patry argues that the Act of Anne failed to undermine London’s control of the book trade: “After the Statute of Anne, as before,” he writes, “the only purchasers of authors’ works were a small group of London booksellers” (&lt;a href=&quot;https://books.google.com/books?id=8-4catWPy84C&amp;amp;q=%22small+group+of+London+booksellers%22#v=snippet&amp;amp;q=%22small%20group%20of%20London%20booksellers%22&amp;amp;f=false&quot;&gt;84&lt;/a&gt;). To investigate what the ESTC had to say on this question, I compared the geographical distribution of English printers in the half centuries before and after the passage of the Act (click for full size):&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&quot;img-link&quot; href=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; data-lightbox=&quot;provincial_printing&quot; data-title=&quot;My caption&quot;&gt;
+&lt;p&gt;&lt;a id=&quot;img-link-wrapper&quot; href=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; data-lightbox=&quot;provincial_printing&quot; data-title=&quot;My caption&quot;&gt;
   &lt;img id=&quot;img-link&quot; src=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; alt=&quot;Provincial Printing&quot; style=&quot;width:100%&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 </description>
