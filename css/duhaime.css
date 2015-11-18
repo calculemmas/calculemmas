@@ -136,7 +136,7 @@ header .logo:hover {
 .content img:not(.emoji) {
     min-width: 110%;
     max-width: 110%;
-    margin-left: -5%;
+    /*margin-left: -5%;*/
     border-radius: 5px
 }
 .content li img {
@@ -610,9 +610,33 @@ footer {
     font-weight: bold
 }
 
-
-
-#img-link{
-  text-decoration:none;
+/* TODO: Factor into CSS above */
+#img-link-wrapper, #img-link img {
+   text-decoration: none !important;
+   border:0px !important;
+   outline:none;
+   border-width: 0px;
+   outline-width:0px;
 }
 
+.site-footer {
+  margin-left: -60px;
+  text-align: center; 
+}
+
+.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto 
+}
+
+table {
+  background-color: #f5f2f0;
+  font-size: 14px;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+table td, table th {
+  border: 1px solid black;
+}

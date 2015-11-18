@@ -10,9 +10,12 @@
   <link rel="shortcut icon" type="image/png" href="/images/sharktooth.png"> 
 
   <title>Crosslingual Plagiarism Detection with Scikit-Learn</title>
-  <meta name="description" content="">
+  <meta name="description" content="Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing sc...">
 
-  <link rel="stylesheet" href="http://fast.fonts.com/cssapi/d70ca5cd-778e-48cc-9e59-6b276425c670.css" type="text/css" media="screen,projection" />
+  <!-- Fonts -->
+  <link rel="stylesheet" href="http://fast.fonts.com/cssapi/d70ca5cd-778e-48cc-9e59-6b276425c670.css" type="text/css" media="screen,projection" />  
+
+  <!-- Main CSS -->
   <link rel="stylesheet" href="/css/duhaime.css" media="screen,projection" />
   <link rel="stylesheet" href="/css/footer.css" media="screen,projection" />
 
@@ -51,27 +54,7 @@
   <div class="date">
     July 19, 2015
   </div>
-    <style>
-
-#centered {
-  display: block;
-  margin-left: auto;
-  margin-right: auto 
-}
-
-table {
-  background-color: #f5f2f0;
-  font-size: 14px;
-  border-collapse: collapse;
-  padding: 5px;
-}
-
-table td, table th {
-  border: 1px solid black;
-}
-</style>
-
-<p>Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French <i>philosophes</i> such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.</p>
+    <p>Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French <i>philosophes</i> such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.</p>
 
 <h4>Sample Training Data</h4>
 
@@ -133,13 +116,13 @@ table td, table th {
 
 <p>To prepare the data for this algorithm, I used the <a href="http://pythonhosted.org/goslate/">Google Translate API</a> to translate French texts into English, the <a href="https://words.bighugelabs.com/api.php">Big Huge Labs Thesaurus API</a> to collect synonyms for each word in Passage B, and the <a href="http://www.nltk.org/">NLTK</a> to clean the resulting texts (dropping stop words, removing punctuation, etc.). Once these resources were prepared, I used an implementation of the algorithm described above to calculate the “similarity” between the paired passages in the training data. As one can see, the similarity value returned by this algorithm discriminates reasonably well between plagiarized and non-plagiarized passages:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;" /></p>
 
 <p>The y-axis here is discrete–each data point represents either a plagiarized pair of passages (such as those in the training data discussed above), or a non-plagiarized pair of passages. The x-axis is really the important axis. The further to the right a point falls on this axis, the greater the length-normalized similarity score for the passage pair. As one would expect, plagiarized passages have much higher similarity scores than non-plagiarized passages.</p>
 
 <p>In order to investigate how sensitive this similarity method is to passage length, I iterated over all sub-windows of <i>n</i> words within the training data, and used the same similarity method to calculate the similarity of the sub-window within the text. When <i>n</i> is five, for instance, one would compare the first five words of Passage A to the first five from Passage B. After storing that value, one would compare words two through six from Passage A to words one through five of Passage B, then words three through seven from Passage A to words one through five of Passage B, proceeding in this way until all five-word windows had been compared. Once all of these five-word scores are calculated, only the maximum score is retained, and the rest are discarded. The following plot shows that as the number of words in the sub-window increases, the separation between plagiarized and non-plagiarized passages also increases:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png" alt="Alzahrani Similarity Subwindows" style="width:100%; height:100%" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png" alt="Alzahrani Similarity Subwindows" style="width:100%; height:100%" /></p>
 
 <h4>FEATURE SELECTION: WORD2VEC SIMILARITY</h4>
 <p>Although the method discussed above provides helpful separation between plagiarized and non-plagiarized passages, it reduces word pairs to one of three states: equivalent, synonymous, and irrelevant. Intuitively, this model feels limited, because one senses that words can have <i>degrees</i> of similarity. Consider the words <i>small</i>, <i>tiny</i>, and <i>humble</i>. The thesaurus discussed above identifies these terms as synonyms, and the algorithm described above essentially treats the words as interchangeable synonyms. This is slightly unsatisfying because the word <i>small</i> seems more similar to the word <i>tiny</i> than the word <i>humble</i>.</p>
@@ -165,11 +148,11 @@ for v in [v2,v3]:
 
 <p>Running this script returns [[ 0.71879274]] and [[ 0.29307675]] respectively, which is to say Word2Vec can recognize that the word <i>small</i> is more similar to <i>tiny</i> than it is to <i>humble</i>. Because Word2Vec allows one to calculate these fine gradations of word similarity, it does a great job calculating the similarity of passages from the Goldsmith training data. The following plot shows the separation achieved by running a modified version of the “Alzahrani algorithm” described above, using this time Word2Vec to measure word similarity:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;" /></p>
 
 <p>As one can see, the Word2Vec similarity measure achieves very promising separation between plagiarized and non-plagiarized passage pairs. By repeating the subwindow method described above, one can identify the critical value wherein separation between plagiarized and non-plagiarized passages is best achieved with a Word2Vec similarity metric:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png" alt="Word2Vec Subwindow Similarity" style="width:100%; height:100%" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png" alt="Word2Vec Subwindow Similarity" style="width:100%; height:100%" /></p>
 
 <h4>FEATURE SELECTION: SYNTACTIC SIMILARITY</h4>
 
@@ -182,7 +165,7 @@ for v in [v2,v3]:
 
 <p>Using these sequences, two similarity metrics were used to measure the similarity between each of the paired passages in the training data. The first measure (on the x-axis below) simply measured the cosine distance between the two POS sequences; the second measure (on the y-axis below) calculated the longest common POS substring between the two passages. As one would expect, plagiarized passages tend to have higher values in both categories:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity" style="width:575px; height:350px; min-width:575px; max-width:575px;" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity" style="width:575px; height:350px; min-width:575px; max-width:575px;" /></p>
 
 <h4>CLASSIFIER RESULTS</h4>
 <p>From the similarity metrics discussed above, I selected a bare-bones set of six features that could be fed to a plagiarism classifier: (1) the aggregate “Alzahrani similarity” score, (2) the maximum six-gram Alzahrani similarity score, (3) the aggregate Word2Vec similarity score, (4) the cosine distance between the part of speech tag sets, (5) the longest common part of speech string, and (6) the longest contiguous common part of speech string. Those values were all represented in a matrix format with one pair of passages per row and one feature per column. Once this matrix was prepared, a small selection of classifiers hosted within Python’s <a href="http://scikit-learn.org/stable/">Scikit Learn</a> library were chosen for comparison. Cross-classifier comparison is valuable, because different classifiers use very different logic to classify observations. The following plot from the Scikit Learn documentation shows that using a common set of input data (the first column below), the various classifiers in the given row classify that data rather differently:</p>
@@ -191,7 +174,7 @@ for v in [v2,v3]:
 
 <p>In order to avoid prejudging the best classifier for the current task, half a dozen classifiers were selected and evaluated with hold one out tests. That is to say, for each observation in the training data, all other rows were used to train the given classifier, and the trained classifier was asked to predict whether the left-out observation was a plagiarism or not. Because this is a two class prediction task (each observation either is or is not an instance of plagiarism), the baseline success rate is 50%. Any performance below this baseline would be worse than random guessing. Happily, all of the classifiers achieved success rates that greatly exceeded this baseline value:</p>
 
-<p><img id="centered" src="/images/post_images/crosslingual_plagiarism_detection/classification_results.png" alt="Classification Results" style="width:100%" /></p>
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/classification_results.png" alt="Classification Results" style="width:100%" /></p>
 
 <p>Generally speaking, precision values were higher than recall, perhaps because some of the plagiarisms in the training data were fuzzier than others. Nevertheless, these accuracy values were high enough to warrant further exploration of Goldsmith’s writing. Using the array of features discussed above and others to be discussed in a subsequent post, I tracked down a significant number of plagiarisms that were not part of the training data, including the following outright translations from the Encyclopédie:</p>
 
@@ -222,8 +205,8 @@ for v in [v2,v3]:
 
     <footer class="site-footer">
   <div class="wrapper">
-    <ul class="social-media-list" style="text-align: center">
-   
+    <ul class="social-media-list">
+
     
       <a href="https://github.com/duhaime" style="text-decoration: none">
   <span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>

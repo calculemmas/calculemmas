@@ -5,8 +5,8 @@
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 15 Nov 2015 11:00:53 -0500</pubDate>
-    <lastBuildDate>Sun, 15 Nov 2015 11:00:53 -0500</lastBuildDate>
+    <pubDate>Tue, 17 Nov 2015 20:07:31 -0500</pubDate>
+    <lastBuildDate>Tue, 17 Nov 2015 20:07:31 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
     
       <item>
@@ -158,27 +158,7 @@ import sys, codecs, numpy&lt;/code&gt;&lt;/pre&gt;
     
       <item>
         <title>Crosslingual Plagiarism Detection with Scikit-Learn</title>
-        <description>&lt;style&gt;
-
-#centered {
-  display: block;
-  margin-left: auto;
-  margin-right: auto 
-}
-
-table {
-  background-color: #f5f2f0;
-  font-size: 14px;
-  border-collapse: collapse;
-  padding: 5px;
-}
-
-table td, table th {
-  border: 1px solid black;
-}
-&lt;/style&gt;
-
-&lt;p&gt;Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French &lt;i&gt;philosophes&lt;/i&gt; such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.&lt;/p&gt;
+        <description>&lt;p&gt;Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French &lt;i&gt;philosophes&lt;/i&gt; such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.&lt;/p&gt;
 
 &lt;h4&gt;Sample Training Data&lt;/h4&gt;
 
@@ -240,13 +220,13 @@ table td, table th {
 
 &lt;p&gt;To prepare the data for this algorithm, I used the &lt;a href=&quot;http://pythonhosted.org/goslate/&quot;&gt;Google Translate API&lt;/a&gt; to translate French texts into English, the &lt;a href=&quot;https://words.bighugelabs.com/api.php&quot;&gt;Big Huge Labs Thesaurus API&lt;/a&gt; to collect synonyms for each word in Passage B, and the &lt;a href=&quot;http://www.nltk.org/&quot;&gt;NLTK&lt;/a&gt; to clean the resulting texts (dropping stop words, removing punctuation, etc.). Once these resources were prepared, I used an implementation of the algorithm described above to calculate the “similarity” between the paired passages in the training data. As one can see, the similarity value returned by this algorithm discriminates reasonably well between plagiarized and non-plagiarized passages:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png&quot; alt=&quot;Alzahrani Similarity&quot; style=&quot;width:500px; height:310px; min-width:500px; max-width:500px;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png&quot; alt=&quot;Alzahrani Similarity&quot; style=&quot;width:500px; height:310px; min-width:500px; max-width:500px;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The y-axis here is discrete–each data point represents either a plagiarized pair of passages (such as those in the training data discussed above), or a non-plagiarized pair of passages. The x-axis is really the important axis. The further to the right a point falls on this axis, the greater the length-normalized similarity score for the passage pair. As one would expect, plagiarized passages have much higher similarity scores than non-plagiarized passages.&lt;/p&gt;
 
 &lt;p&gt;In order to investigate how sensitive this similarity method is to passage length, I iterated over all sub-windows of &lt;i&gt;n&lt;/i&gt; words within the training data, and used the same similarity method to calculate the similarity of the sub-window within the text. When &lt;i&gt;n&lt;/i&gt; is five, for instance, one would compare the first five words of Passage A to the first five from Passage B. After storing that value, one would compare words two through six from Passage A to words one through five of Passage B, then words three through seven from Passage A to words one through five of Passage B, proceeding in this way until all five-word windows had been compared. Once all of these five-word scores are calculated, only the maximum score is retained, and the rest are discarded. The following plot shows that as the number of words in the sub-window increases, the separation between plagiarized and non-plagiarized passages also increases:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png&quot; alt=&quot;Alzahrani Similarity Subwindows&quot; style=&quot;width:100%; height:100%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png&quot; alt=&quot;Alzahrani Similarity Subwindows&quot; style=&quot;width:100%; height:100%&quot; /&gt;&lt;/p&gt;
 
 &lt;h4&gt;FEATURE SELECTION: WORD2VEC SIMILARITY&lt;/h4&gt;
 &lt;p&gt;Although the method discussed above provides helpful separation between plagiarized and non-plagiarized passages, it reduces word pairs to one of three states: equivalent, synonymous, and irrelevant. Intuitively, this model feels limited, because one senses that words can have &lt;i&gt;degrees&lt;/i&gt; of similarity. Consider the words &lt;i&gt;small&lt;/i&gt;, &lt;i&gt;tiny&lt;/i&gt;, and &lt;i&gt;humble&lt;/i&gt;. The thesaurus discussed above identifies these terms as synonyms, and the algorithm described above essentially treats the words as interchangeable synonyms. This is slightly unsatisfying because the word &lt;i&gt;small&lt;/i&gt; seems more similar to the word &lt;i&gt;tiny&lt;/i&gt; than the word &lt;i&gt;humble&lt;/i&gt;.&lt;/p&gt;
@@ -272,11 +252,11 @@ for v in [v2,v3]:
 
 &lt;p&gt;Running this script returns [[ 0.71879274]] and [[ 0.29307675]] respectively, which is to say Word2Vec can recognize that the word &lt;i&gt;small&lt;/i&gt; is more similar to &lt;i&gt;tiny&lt;/i&gt; than it is to &lt;i&gt;humble&lt;/i&gt;. Because Word2Vec allows one to calculate these fine gradations of word similarity, it does a great job calculating the similarity of passages from the Goldsmith training data. The following plot shows the separation achieved by running a modified version of the “Alzahrani algorithm” described above, using this time Word2Vec to measure word similarity:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png&quot; alt=&quot;Word2Vec Similarity&quot; style=&quot;width:500px; height:310px; min-width:500px; max-width:500px;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png&quot; alt=&quot;Word2Vec Similarity&quot; style=&quot;width:500px; height:310px; min-width:500px; max-width:500px;&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;As one can see, the Word2Vec similarity measure achieves very promising separation between plagiarized and non-plagiarized passage pairs. By repeating the subwindow method described above, one can identify the critical value wherein separation between plagiarized and non-plagiarized passages is best achieved with a Word2Vec similarity metric:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png&quot; alt=&quot;Word2Vec Subwindow Similarity&quot; style=&quot;width:100%; height:100%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png&quot; alt=&quot;Word2Vec Subwindow Similarity&quot; style=&quot;width:100%; height:100%&quot; /&gt;&lt;/p&gt;
 
 &lt;h4&gt;FEATURE SELECTION: SYNTACTIC SIMILARITY&lt;/h4&gt;
 
@@ -289,7 +269,7 @@ for v in [v2,v3]:
 
 &lt;p&gt;Using these sequences, two similarity metrics were used to measure the similarity between each of the paired passages in the training data. The first measure (on the x-axis below) simply measured the cosine distance between the two POS sequences; the second measure (on the y-axis below) calculated the longest common POS substring between the two passages. As one would expect, plagiarized passages tend to have higher values in both categories:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/syntax.png&quot; alt=&quot;Syntactic Similarity&quot; style=&quot;width:575px; height:350px; min-width:575px; max-width:575px;&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/syntax.png&quot; alt=&quot;Syntactic Similarity&quot; style=&quot;width:575px; height:350px; min-width:575px; max-width:575px;&quot; /&gt;&lt;/p&gt;
 
 &lt;h4&gt;CLASSIFIER RESULTS&lt;/h4&gt;
 &lt;p&gt;From the similarity metrics discussed above, I selected a bare-bones set of six features that could be fed to a plagiarism classifier: (1) the aggregate “Alzahrani similarity” score, (2) the maximum six-gram Alzahrani similarity score, (3) the aggregate Word2Vec similarity score, (4) the cosine distance between the part of speech tag sets, (5) the longest common part of speech string, and (6) the longest contiguous common part of speech string. Those values were all represented in a matrix format with one pair of passages per row and one feature per column. Once this matrix was prepared, a small selection of classifiers hosted within Python’s &lt;a href=&quot;http://scikit-learn.org/stable/&quot;&gt;Scikit Learn&lt;/a&gt; library were chosen for comparison. Cross-classifier comparison is valuable, because different classifiers use very different logic to classify observations. The following plot from the Scikit Learn documentation shows that using a common set of input data (the first column below), the various classifiers in the given row classify that data rather differently:&lt;/p&gt;
@@ -298,7 +278,7 @@ for v in [v2,v3]:
 
 &lt;p&gt;In order to avoid prejudging the best classifier for the current task, half a dozen classifiers were selected and evaluated with hold one out tests. That is to say, for each observation in the training data, all other rows were used to train the given classifier, and the trained classifier was asked to predict whether the left-out observation was a plagiarism or not. Because this is a two class prediction task (each observation either is or is not an instance of plagiarism), the baseline success rate is 50%. Any performance below this baseline would be worse than random guessing. Happily, all of the classifiers achieved success rates that greatly exceeded this baseline value:&lt;/p&gt;
 
-&lt;p&gt;&lt;img id=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/classification_results.png&quot; alt=&quot;Classification Results&quot; style=&quot;width:100%&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img class=&quot;centered&quot; src=&quot;/images/post_images/crosslingual_plagiarism_detection/classification_results.png&quot; alt=&quot;Classification Results&quot; style=&quot;width:100%&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Generally speaking, precision values were higher than recall, perhaps because some of the plagiarisms in the training data were fuzzier than others. Nevertheless, these accuracy values were high enough to warrant further exploration of Goldsmith’s writing. Using the array of features discussed above and others to be discussed in a subsequent post, I tracked down a significant number of plagiarisms that were not part of the training data, including the following outright translations from the Encyclopédie:&lt;/p&gt;
 
@@ -343,8 +323,15 @@ for v in [v2,v3]:
 
 &lt;p&gt;One of the debates surrounding the Act of Anne concerns the degree to which the statute altered the geography of the English book trade. Prior to the passage of the Act, legal historian Diane Zimmerman notes, the Stationers’ Company dominated the book industry, and because the company’s printers were primarily stationed in London, the book trade was also centered in the metropole. With the passage of the Statute of Anne, however, authors could sell or trade their copyrights to printers outside of London: “Now any printer [or] bookseller, wherever located within the country, could register a copyright with the Company” and “since purchasers of the copies could be located anywhere in the United Kingdom, the Stationers’ Company did not regain its monopoly [on the book trade]” (7). Contra Zimmerman, William Patry argues that the Act of Anne failed to undermine London’s control of the book trade: “After the Statute of Anne, as before,” he writes, “the only purchasers of authors’ works were a small group of London booksellers” (&lt;a href=&quot;https://books.google.com/books?id=8-4catWPy84C&amp;amp;q=%22small+group+of+London+booksellers%22#v=snippet&amp;amp;q=%22small%20group%20of%20London%20booksellers%22&amp;amp;f=false&quot;&gt;84&lt;/a&gt;). To investigate what the ESTC had to say on this question, I compared the geographical distribution of English printers in the half centuries before and after the passage of the Act (click for full size):&lt;/p&gt;
 
-&lt;p&gt;&lt;a id=&quot;img-link&quot; href=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; data-lightbox=&quot;provincial_printing&quot; data-title=&quot;My caption&quot;&gt;
+&lt;p&gt;&lt;a id=&quot;img-link-wrapper&quot; href=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; data-lightbox=&quot;provincial_printing&quot; data-title=&quot;&quot;&gt;
   &lt;img id=&quot;img-link&quot; src=&quot;/images/post_images/mapping_early_english_books/provincial_printing.png&quot; alt=&quot;Provincial Printing&quot; style=&quot;width:100%&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;The usual cautions concerning false imprints and varying survival rates notwithstanding, the ESTC clearly demonstrates the decentralization of English printing in the wake of the Act of Anne. London of course remained the primary site of publication throughout the years covered by the ESTC—publishing two-thirds of all records from the period—though its annual share in the trade fell quite dramatically across the eighteenth century:&lt;/p&gt;
+
+&lt;p&gt;&lt;a class=&quot;centered&quot; id=&quot;img-link-wrapper&quot; href=&quot;/images/post_images/mapping_early_english_books/london_printing.png&quot; data-lightbox=&quot;london_printing&quot; data-title=&quot;&quot;&gt;
+  &lt;img class=&quot;centered&quot; id=&quot;img-link&quot; src=&quot;/images/post_images/mapping_early_english_books/london_printing.png&quot; alt=&quot;London Printing&quot; style=&quot;min-width:90%; max-width:90%&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;One can explain some of that decline by examining the growth of printing in major metropolitan areas outside of London, such as Edinburgh (responsible for 6.5% of total editions in the ESTC), Dublin (5.4%), and Boston (3.7%), which claimed the second, third, and fourth overall largest shares of the book trade according to the ESTC:&lt;/p&gt;
 
 </description>
         <pubDate>Wed, 07 Jan 2015 10:24:24 -0500</pubDate>
