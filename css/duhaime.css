@@ -611,7 +611,8 @@ footer {
 }
 
 /* TODO: Factor into CSS above */
-#img-link-wrapper, #img-link img {
+
+.img-link-wrapper {
    text-decoration: none !important;
    border:0px !important;
    outline:none;
