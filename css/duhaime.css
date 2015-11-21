@@ -134,10 +134,7 @@ header .logo:hover {
     margin: 50px auto
 }
 .content img:not(.emoji) {
-    min-width: 110%;
-    max-width: 110%;
-    margin-left: -5%;
-    border-radius: 5px
+  border-radius: 5px
 }
 .content li img {
     margin: 0;
@@ -146,7 +143,6 @@ header .logo:hover {
 @media (max-width: 38em) {
     .content img:not(.emoji) {
         max-width: 100vw;
-        margin-left: -2rem;
         border-radius: inherit
     }
 }
@@ -610,8 +606,9 @@ footer {
     font-weight: bold
 }
 
+/* TODO: Factor into CSS above */
 
-#img-link-wrapper, #img-link img {
+.img-link-wrapper {
    text-decoration: none !important;
    border:0px !important;
    outline:none;
@@ -619,8 +616,24 @@ footer {
    outline-width:0px;
 }
 
-.site-footer {
-  margin-left: -68px;
+.social-media-list {
+  margin-left: -60px;
   text-align: center; 
 }
 
+.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto 
+}
+
+table {
+  background-color: #f5f2f0;
+  font-size: 14px;
+  border-collapse: collapse;
+  padding: 5px;
+}
+
+table td, table th {
+  border: 1px solid black;
+}
