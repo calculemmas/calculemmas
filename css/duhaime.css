@@ -106,7 +106,7 @@ header .logo:hover {
     color: #cd6602
 }
 .content blockquote:before {
-    font-family: "Times New Roman";
+    font-family: 'Open Sans', sans-serif; font-weight: 400;
     content: "“";
     position: absolute;
     top: -5px;
@@ -159,7 +159,7 @@ header .logo:hover {
     padding: 10px 15px;
     color: #1a898a;
     font-size: .75rem;
-    font-family: "AvenirNextLTW01-Italic", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 400;
     font-style: normal
 }
 .hero {
@@ -221,7 +221,7 @@ header .logo:hover {
     font-size: 13px;
     text-transform: uppercase;
     font-weight: normal;
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif
+    font-family: 'Open Sans', sans-serif; font-weight: 400;
 }
 .closing .bio a {
     text-decoration: none
@@ -269,7 +269,7 @@ header .logo:hover {
 }
 html {
     font-size: 16px;
-    font-family: "AvenirNextLTW01-Regular", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 400;
     line-height: 1.6
 }
 h1,
@@ -282,7 +282,7 @@ b,
 strong {
     color: #eb7260;
     font-weight: normal;
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 700;
     word-break: break-word
 }
 h1,
@@ -303,24 +303,24 @@ strong {
     color: #222
 }
 strong em {
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 700;
     font-style: italic
 }
 em,
 i {
-    font-family: "AvenirNextLTW01-Italic", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 400;
     font-style: normal
 }
 a {
     color: #eb7260
 }
 header li {
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 700;
     font-weight: normal;
     font-size: 15px
 }
 .content .date {
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 700;
     font-weight: normal;
     font-size: 13px
 }
@@ -343,7 +343,7 @@ header li {
     border-color: #eb7260
 }
 footer {
-    font-family: "Avenir Next LT W01 Bold", "Avenir Next", sans-serif;
+    font-family: 'Open Sans', sans-serif; font-weight: 700;
     font-weight: normal
 }
 @media (min-width: 38em) {
