@@ -17,3 +17,10 @@ permalink: '/posts/:title'
 
 # Build settings
 markdown: kramdown
+
+# Gems
+gems: [jekyll-paginate]
+
+# Pagination settings
+paginate: 5
+paginate_path: "/posts/page/:num"
