@@ -67,7 +67,7 @@ def alzahrani_similarity( a_passage, b_passage ):
 
 To prepare the data for this algorithm, I used the [Google Translate API][google-translate-link] to translate French texts into English, the [Big Huge Labs Thesaurus API][big-huge-labs-link] to collect synonyms for each word in Passage B, and the [NLTK][nltk-link] to clean the resulting texts (dropping stop words, removing punctuation, etc.). Once these resources were prepared, I used an implementation of the algorithm described above to calculate the "similarity" between the paired passages in the training data. As one can see, the similarity value returned by this algorithm discriminates reasonably well between plagiarized and non-plagiarized passages:
 
-<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;">
+<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity">
 
 The y-axis here is discrete--each data point represents either a plagiarized pair of passages (such as those in the training data discussed above), or a non-plagiarized pair of passages. The x-axis is really the important axis. The further to the right a point falls on this axis, the greater the length-normalized similarity score for the passage pair. As one would expect, plagiarized passages have much higher similarity scores than non-plagiarized passages.
 
@@ -99,7 +99,7 @@ for v in [v2,v3]:
 
 Running this script returns [[ 0.71879274]] and [[ 0.29307675]] respectively, which is to say Word2Vec can recognize that the word <i>small</i> is more similar to <i>tiny</i> than it is to <i>humble</i>. Because Word2Vec allows one to calculate these fine gradations of word similarity, it does a great job calculating the similarity of passages from the Goldsmith training data. The following plot shows the separation achieved by running a modified version of the "Alzahrani algorithm" described above, using this time Word2Vec to measure word similarity:
 
-<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity" style="width:500px; height:310px; min-width:500px; max-width:500px;">
+<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity">
 
 As one can see, the Word2Vec similarity measure achieves very promising separation between plagiarized and non-plagiarized passage pairs. By repeating the subwindow method described above, one can identify the critical value wherein separation between plagiarized and non-plagiarized passages is best achieved with a Word2Vec similarity metric:
 
@@ -116,7 +116,7 @@ Much like the semantic features discussed above, syntactic similarity can also s
 
 Using these sequences, two similarity metrics were used to measure the similarity between each of the paired passages in the training data. The first measure (on the x-axis below) simply measured the cosine distance between the two POS sequences; the second measure (on the y-axis below) calculated the longest common POS substring between the two passages. As one would expect, plagiarized passages tend to have higher values in both categories:
 
-<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity" style="width:575px; height:350px; min-width:575px; max-width:575px;">
+<img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity">
 
 <h4>CLASSIFIER RESULTS</h4>
 From the similarity metrics discussed above, I selected a bare-bones set of six features that could be fed to a plagiarism classifier: (1) the aggregate "Alzahrani similarity" score, (2) the maximum six-gram Alzahrani similarity score, (3) the aggregate Word2Vec similarity score, (4) the cosine distance between the part of speech tag sets, (5) the longest common part of speech string, and (6) the longest contiguous common part of speech string. Those values were all represented in a matrix format with one pair of passages per row and one feature per column. Once this matrix was prepared, a small selection of classifiers hosted within Python's [Scikit Learn][sklearn-link] library were chosen for comparison. Cross-classifier comparison is valuable, because different classifiers use very different logic to classify observations. The following plot from the Scikit Learn documentation shows that using a common set of input data (the first column below), the various classifiers in the given row classify that data rather differently:
