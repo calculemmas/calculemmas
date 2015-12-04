@@ -3,6 +3,7 @@ layout: post
 title:  "Mapping the Early English Book Trade"
 date:   2015-01-07 10:24:24 -0500
 categories: digital-humanities gis
+comments: true
 ---
 
 <!-- Load JQuery and Lightbox -->
