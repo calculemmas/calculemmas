@@ -623,7 +623,7 @@ footer {
 }
 
 .social-media-list {
-  margin-left: -45px;
+  margin-left: -58px;
   text-align: center; 
 }
 
@@ -643,3 +643,12 @@ table {
 table td, table th {
   border: 1px solid black;
 }
+
+.icon > svg {
+  display: inline-block;
+  width: 16px;
+  height: 16px; 
+  vertical-align: middle; }
+    /* override svg fills */
+    .icon > svg path { 
+      fill: currentColor; } 
