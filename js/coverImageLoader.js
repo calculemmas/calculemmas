@@ -8,7 +8,7 @@ if (currentAddress.indexOf("/posts/") > -1){
   document.getElementById('coverImage').innerHTML = '<div class="hero" style="background-image: url(' + imageAddress + ');"><h1 class="display_title">Douglas Duhaime</h1></div>';
 }
 else {
-  var imageAddress = '/images/cover_images/blue6.jpg'
+  var imageAddress = '/images/cover_images/jefferys.png'
   document.getElementById('coverImage').innerHTML = '<div class="hero" style="background-image: url(' + imageAddress + ');"><h1 class="display_title">Douglas Duhaime</h1></div>';
 }
 
