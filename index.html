@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Load favicon -->
+  <link rel="shortcut icon" type="image/png" href="/images/sharktooth.png"> 
+
+  <title>Home</title>
+  <meta name="description" content="Working notes on data mining and early book history.">
+
+  <!--Fonts-->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin-ext' rel='stylesheet' type='text/css'>
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="/css/duhaime.css" media="screen,projection" />
+  <link rel="stylesheet" href="/css/footer.css" media="screen,projection" />
+
+  <!-- Syntax highlighting -->
+  <script src="/js/prism.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/prism.css">
+
+  <!-- Lightbox for images -->
+  <link href="/css/lightbox.css" rel="stylesheet">
+
+  <link rel="canonical" href="http://yourdomain.com/">
+  <link rel="alternate" type="application/rss+xml" title="Douglas Duhaime" href="http://yourdomain.com/feed.xml">
+</head>
+
+
+  <body>
+
+    <div id="coverImage"></div>
+
+<!-- Script to append image to coverImage div -->
+<script type="text/javascript" src="/js/coverImageLoader.js"></script>
+ 
+<div class="container menu">
+  <ul>
+    <li><a href="/">Posts</a></li>
+    <li><a href="/about">About</a></li>
+    <li><a href="/secret">Secret</a></li>
+  </ul>
+
+<hr />
+</div>
+
+
+    <div class="container content">
+      <div class="posts">
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/clustering-semantic-vectors">
+        Clustering Semantic Vectors
+      </a>
+    </h1>
+
+    <time datetime=September 12, 2015" class="date">September 12, 2015</time>
+
+    <p>Google’s Word2Vec and Stanford’s GloVe have recently offered two fantastic open source software packages capable of transposing words into a high dimension vector space. In both cases, a vector’s position within the high dimensional space gives a good indication of the word’s semantic class (among other things), and in both cases these vector positions can be used in a variety of applications. In the post below, I’ll discuss one approach you can take to clustering the vectors into coherent semantic groupings.</p>
+
+<p>Both Word2Vec and GloVe can create vector spaces given a large training corpus, but both maintain pretrained vectors as well. To get started with ~1GB of pretrained vectors from GloVe, one need only run the following lines:</p>
+
+<div>
+  <pre data-line=""><code class="language-shell">wget http://www-nlp.stanford.edu/data/glove.6B.300d.txt.gz
+gunzip glove.6B.300d.txt.gz</code></pre>
+</div>
+
+<p>If you unzip and then glance at glove.6B.300d.txt, you’ll see that it’s organized as follows:</p>
+
+<div>
+  <pre data-line=""><code class="language-shell">the 0.04656 0.21318 -0.0074364 [...] 0.053913
+, -0.25539 -0.25723 0.13169 [...] 0.35499
+. -0.12559 0.01363 0.10306 [...] 0.13684
+of -0.076947 -0.021211 0.21271 [...] -0.046533
+to -0.25756 -0.057132 -0.6719 [...] -0.070621
+[...]
+sandberger 0.429191 -0.296897 0.15011 [...] -0.0590532</code></pre>
+</div>
+
+<p>Each new line contains a token followed by 300 signed floats, and those values appear to be organized from most to least common. Given this ready format, it’s fairly straightforward to get straight to clustering!</p>
+
+<p>There are a variety of methods for clustering vectors, including density-based clustering, hierarchical clustering, and centroid clustering. One of the most intuitive and most commonly used centroid-based methods is K-Means. Given a collection of points in a space, K-Means uses a Hunger Games style random lottery to pick a few lucky points (colored green below), then assigns each of the non-lucky points to the lucky point to which it’s closest. Using these preliminary groupings, the next step is to find the “centroid” (or geometric center) of each group, using the same technique one would use to find the center of a square. These centroids become the new lucky points, and again each non-lucky point is again assigned to the lucky point to which it’s closest. This process continues until the centroids settle down and stop moving, after which the clustering is complete. Here’s a nice visual description of K-Means <a href="http://shabal.in/visuals.html">[source]</a>:</p>
+
+<p><img src="/images/post_images/clustering_semantic_vectors/kmeans.gif" id="gif" /></p>
+
+<p>To cluster the GloVe vectors in a similar fashion, one can use the sklearn package in Python, along with a few other packages:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">from __future__ import division
+from sklearn.cluster import KMeans 
+from numbers import Number
+from pandas import DataFrame
+import sys, codecs, numpy</code></pre>
+</div>
+
+<p>It will also be helpful to build a class to mimic the behavior of autovivification in Perl, which is essentially the process of creating new default hash values given a new key. In Python, this behavior is available through collections.defaultdict(), but the latter isn’t serializable, so the following class is handy. Given an input key it hasn’t seen, the class will create an empty list as the corresponding hash value:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">class autovivify_list(dict):
+    &#39;&#39;&#39;A pickleable version of collections.defaultdict&#39;&#39;&#39;
+    def __missing__(self, key):
+        &#39;&#39;&#39;Given a missing key, set initial value to an empty list&#39;&#39;&#39;
+        value = self[key] = []
+        return value
+
+    def __add__(self, x):
+        &#39;&#39;&#39;Override addition for numeric types when self is empty&#39;&#39;&#39;
+        if not self and isinstance(x, Number):
+            return x
+        raise ValueError
+
+    def __sub__(self, x):
+        &#39;&#39;&#39;Also provide subtraction method&#39;&#39;&#39;
+        if not self and isinstance(x, Number):
+            return -1 * x
+        raise ValueError</code></pre>
+</div>
+
+<p>We also want a method to read in a vector file (e.g. glove.6B.300d.txt) and store each word and the position of that word within the vector space. Because reading in and analyzing some of the larger GloVe files can take a long time, to get going quickly one can limit the number of lines to read from the input file by specifying a global value (n_words), which is defined later on:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">def build_word_vector_matrix(vector_file, n_words):
+    &#39;&#39;&#39;Return the vectors and labels for the first n_words in vector file&#39;&#39;&#39;
+    numpy_arrays = []
+    labels_array = []
+    with codecs.open(vector_file, &#39;r&#39;, &#39;utf-8&#39;) as f:
+        for c, r in enumerate(f):
+            sr = r.split()
+            labels_array.append(sr[0])
+            numpy_arrays.append( numpy.array([float(i) for i in sr[1:]]) )
+
+            if c == n_words:
+                return numpy.array( numpy_arrays ), labels_array
+
+    return numpy.array( numpy_arrays ), labels_array</code></pre>
+</div>
+
+<p>Scikit-Learn’s implementation of K-Means returns an object (cluster_labels in these snippets) that indicates the cluster to which each input vector belongs. That object doesn’t tell one which word belongs in each cluster, however, so the following method takes care of this. Because all of the words being analyzed are stored in labels_array and the cluster to which each word belongs is stored in cluster_labels, the following method can easily map those two sequences together:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">def find_word_clusters(labels_array, cluster_labels):
+    &#39;&#39;&#39;Return the set of words in each cluster&#39;&#39;&#39;
+    cluster_to_words = autovivify_list()
+    for c, i in enumerate(cluster_labels):
+        cluster_to_words[ i ].append( labels_array[c] )
+    return cluster_to_words</code></pre>
+</div>
+
+<p>Finally, we can call the methods above, perform K-Means clustering, and print the contents of each cluster with the following block:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">if __name__ == &quot;__main__&quot;:
+    input_vector_file = sys.argv[1] # Vector file input (e.g. glove.6B.300d.txt)
+    n_words           = int(sys.argv[2]) # Number of words to analyze 
+    reduction_factor  = float(sys.argv[3]) # Amount of dimension reduction {0,1}
+    clusters_to_make  = int( n_words * reduction_factor ) # Number of clusters to make
+    df, labels_array  = build_word_vector_matrix(input_vector_file, n_words)
+    kmeans_model      = KMeans(init=&#39;k-means++&#39;, n_clusters=clusters_to_make, n_init=10)
+    kmeans_model.fit(df)
+
+    cluster_labels    = kmeans_model.labels_
+    cluster_inertia   = kmeans_model.inertia_
+    cluster_to_words  = find_word_clusters(labels_array, cluster_labels)
+
+    for c in cluster_to_words:
+        print cluster_to_words[c]
+        print &quot;\n&quot;</code></pre>
+</div>
+
+<p>The full script is available <a href="https://gist.github.com/duhaime/9330473f9a4e288f00af">here</a>. To run it, one needs to specify the vector file to be read in, the number of words one wishes to sample from that file (one can of course read them all, but doing so can take some time), and the “reduction factor”, which determines the number of clusters to be made. If one specifies a reduction factor of .1, for instance, the routine will produce n*.1 clusters, where n is the number of words sampled from the file. The following command reads in the first 10,000 words, and produces 1,000 clusters:</p>
+
+<div>
+  <pre data-line=""><code class="language-shell">python cluster_vectors.py glove.6B.300d.txt 10000 .1</code></pre>
+</div>
+
+<p>The output of this command is the series of clusters produced by the K-Means clustering:</p>
+
+<div>
+  <pre data-line=""><code class="language-shell">[u&#39;Chicago&#39;, u&#39;Boston&#39;, u&#39;Houston&#39;, u&#39;Atlanta&#39;, u&#39;Dallas&#39;, u&#39;Denver&#39;, u&#39;Philadelphia&#39;, u&#39;Baltimore&#39;, u&#39;Cleveland&#39;, u&#39;Pittsburgh&#39;, u&#39;Buffalo&#39;, u&#39;Cincinnati&#39;, u&#39;Louisville&#39;, u&#39;Milwaukee&#39;, u&#39;Memphis&#39;, u&#39;Indianapolis&#39;, u&#39;Auburn&#39;, u&#39;Dame&#39;]
+
+[u&#39;Product&#39;, u&#39;Products&#39;, u&#39;Shipping&#39;, u&#39;Brand&#39;, u&#39;Customer&#39;, u&#39;Items&#39;, u&#39;Retail&#39;, u&#39;Manufacturer&#39;, u&#39;Supply&#39;, u&#39;Cart&#39;, u&#39;SKU&#39;, u&#39;Hardware&#39;, u&#39;OEM&#39;, u&#39;Warranty&#39;, u&#39;Brands&#39;]
+
+[u&#39;home&#39;, u&#39;house&#39;, u&#39;homes&#39;, u&#39;houses&#39;, u&#39;housing&#39;, u&#39;offices&#39;, u&#39;household&#39;, u&#39;acres&#39;, u&#39;residence&#39;]
+
+[...]
+
+[u&#39;Night&#39;, u&#39;Disney&#39;, u&#39;Magic&#39;, u&#39;Dream&#39;, u&#39;Ultimate&#39;, u&#39;Fantasy&#39;, u&#39;Theme&#39;, u&#39;Adventure&#39;, u&#39;Cruise&#39;, u&#39;Potter&#39;, u&#39;Angels&#39;, u&#39;Adventures&#39;, u&#39;Dreams&#39;, u&#39;Wonder&#39;, u&#39;Romance&#39;, u&#39;Mystery&#39;, u&#39;Quest&#39;, u&#39;Sonic&#39;, u&#39;Nights&#39;]</code></pre>
+</div>
+
+<p>I’m currently using these word clusters for fuzzy plagiarism detection, but they can serve a wide variety of purposes. If you find them helpful for a project you’re working on, feel free to drop me a note below!</p>
+
+
+  </article>
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/crosslingual-plagiarism-detection">
+        Crosslingual Plagiarism Detection with Scikit-Learn
+      </a>
+    </h1>
+
+    <time datetime=July 19, 2015" class="date">July 19, 2015</time>
+
+    <p>Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French <i>philosophes</i> such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.</p>
+
+<h4>Sample Training Data</h4>
+
+<p>In order to identify the passages within Goldsmith’s corpus that were taken from other writers, I decided to train a machine learning algorithm to differentiate between plagiarisms and non-plagiarisms. To distinguish between these classes of writing, John Dillon and I collected a large number of plagiarized and non-plagiarized passages within Goldsmith’s writing, and provided annotations to identify whether the target passage had been plagiarized or not. Here are a few sample rows from the training data:</p>
+
+<div id="goldsmith-training-table">
+  <table>
+    <tr><th>French Source</th><th>Goldsmith Text</th><th>Plagiarism</th></tr>
+
+    <tr><td>Bothwell eut toute l'insolence qui suit les grands crimes. Il assembla les principaux seigneurs, et leur fit signer un écrit, par lequel il était dit expressément que la reine ne se pouvait dispenser de l'éspouser, puisqu'il l'avait enlevée, et qu'il avait couché avec elle.</td><td>Bothwell was possessed of all the insolence which attends great crimes: he assembled the principal Lords of the state, and compelled them to sign an instrument, purporting, that they judged it the Queen's interest to marry Bothwell, as he had lain with her against her will.</td><td style="text-align: center">1</td></tr>
+  
+    <tr><td>Histoire c'est le récit des faits donnés pour vrais; au contraire de la fable, qui est le récit des faits donnés pour faux.</td><td>In the early part of history a want of real facts hath induced many to spin out the little that was known with conjecture.</td><td style="text-align: center">0</td></tr>
+
+    <tr><td>La meilleure maniere de connoître l'usage qu'on doit faire de l' esprit, est de lire le petit nombre de bons ouvravrages de génie qu'on a dans les langues savantes &amp; dans la nôtre.</td><td>The best method of knowing the true use to be made of wit is, by reading the small number of good works, both in the learned languages, and in our own.</td><td style="text-align: center">1</td></tr>  
+    <tr><td>Comme il y a en Peinture différentes écoles, il y en a aussi en Sculpture, en Architecture, en Musique, &amp; en général dans tous les beaux Arts.</td><td>A school in the polite arts, properly signifies, that succession of artists which has learned the principles of the art from some eminent master, either by hearing his lessons, or studying his works.</td><td style="text-align: center">0</td></tr>  
+  
+    <tr><td>Des étoiles qui tombent, des montagnes qui se fendent, des fleuves qui reculent, le Soleil &amp; la Lune qui se dissolvent, des comparaisons fausses &amp; gigantesques, la nature toûjours outrée, sont le caractere de ces écrivains, parce que dans ces pays où l'on n'a jamais parlé en public.</td><td>Falling stars, splitting mountains, rivers flowing to their sources, the sun and moon dissolving, false and unnatural comparisons, and nature everywhere exaggerated, form the character of these writers; and this arises from their never, in these countries, being permitted to speak in public.</td><td style="text-align: center">1</td></tr>
+
+  </table>
+</div>
+
+<p>Given this training data, the goal was to identify some features that commonly appear in Goldsmith’s plagiarized passages but don’t commonly appear in his non-plagiarized passages. If we could derive a set of features that differentiate between these two classes, we would be ready to search through Goldsmith’s corpus and tease out only those passages that had been borrowed from elsewhere.</p>
+
+<h4>FEATURE SELECTION: ALZAHRANI SIMILARITY</h4>
+
+<p>Because a plagiarized passage can be expected to have language that is similar but not necessarily identical to the language used within the plagiarized source text, I decided to test some fuzzy string similarity measures. One of the more promising leads on this front was adapted from the work of Salha M. Alzahrani et al. [2012], who has produced a number of great papers on plagiarism detection. The specific similarity measure adapted from Alzahrani calculates the similarity between two passages (call them Passage A and Passage B) in the following way:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">def alzahrani_similarity( a_passage, b_passage ):
+
+    # Create a similarity counter and set its value to zero
+    similarity = 0
+
+    # For each word in Passage A
+    for a_word in a_passage:
+
+        # If that word is in Passage B
+        if a_word in b_passage:
+
+            # Add one to the similarity counter
+            similarity += 1
+
+        # Otherwise,
+        else:
+
+            # For each word in Passage B
+            for b_word in b_passage:    
+
+                # If the current word from Passage A is a synonym of the current word from Passage B,
+                if a_word in find_synonyms( b_word ):
+
+                    # Add one half to the similarity counter
+                    similarity += .5
+                    break
+
+    # Finally, divide the similarity score by the number of words in the longer passage
+    return similarity / max( len(a_passage), len(b_passage) )</code></pre>
+</div>
+
+<p>To prepare the data for this algorithm, I used the <a href="http://pythonhosted.org/goslate/">Google Translate API</a> to translate French texts into English, the <a href="https://words.bighugelabs.com/api.php">Big Huge Labs Thesaurus API</a> to collect synonyms for each word in Passage B, and the <a href="http://www.nltk.org/">NLTK</a> to clean the resulting texts (dropping stop words, removing punctuation, etc.). Once these resources were prepared, I used an implementation of the algorithm described above to calculate the “similarity” between the paired passages in the training data. As one can see, the similarity value returned by this algorithm discriminates reasonably well between plagiarized and non-plagiarized passages:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity" /></p>
+
+<p>The y-axis here is discrete–each data point represents either a plagiarized pair of passages (such as those in the training data discussed above), or a non-plagiarized pair of passages. The x-axis is really the important axis. The further to the right a point falls on this axis, the greater the length-normalized similarity score for the passage pair. As one would expect, plagiarized passages have much higher similarity scores than non-plagiarized passages.</p>
+
+<p>In order to investigate how sensitive this similarity method is to passage length, I iterated over all sub-windows of <i>n</i> words within the training data, and used the same similarity method to calculate the similarity of the sub-window within the text. When <i>n</i> is five, for instance, one would compare the first five words of Passage A to the first five from Passage B. After storing that value, one would compare words two through six from Passage A to words one through five of Passage B, then words three through seven from Passage A to words one through five of Passage B, proceeding in this way until all five-word windows had been compared. Once all of these five-word scores are calculated, only the maximum score is retained, and the rest are discarded. The following plot shows that as the number of words in the sub-window increases, the separation between plagiarized and non-plagiarized passages also increases:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png" alt="Alzahrani Similarity Subwindows" style="width:100%; height:100%" /></p>
+
+<h4>FEATURE SELECTION: WORD2VEC SIMILARITY</h4>
+<p>Although the method discussed above provides helpful separation between plagiarized and non-plagiarized passages, it reduces word pairs to one of three states: equivalent, synonymous, and irrelevant. Intuitively, this model feels limited, because one senses that words can have <i>degrees</i> of similarity. Consider the words <i>small</i>, <i>tiny</i>, and <i>humble</i>. The thesaurus discussed above identifies these terms as synonyms, and the algorithm described above essentially treats the words as interchangeable synonyms. This is slightly unsatisfying because the word <i>small</i> seems more similar to the word <i>tiny</i> than the word <i>humble</i>.</p>
+
+<p>To capture some of these finer gradations in meaning, I called on <a href="https://code.google.com/p/word2vec/">Word2Vec</a>, a method that uses backpropagation to represent words in high-dimensional vector spaces. Once a word has been transposed into this vector space, one can compare a word’s vector to another word’s vector and obtain a measure of the similarity of those words. The following snippet, for instance, uses a cosine distance metric to measure the degree to which tiny and humble are similar to the word small:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">from gensim.models.word2vec import Word2Vec
+from sklearn.metrics.pairwise import cosine_similarity        
+
+# Load the Google pretrained word vectors
+model = Word2Vec.load_word2vec_format(&#39;../google_pretrained_word_vectors/GoogleNews-vectors-negative300.bin.gz&#39;, binary=True)
+
+# Obtain the vector representations of three words
+v1 = model[ &quot;small&quot; ]
+v2 = model[ &quot;tiny&quot; ]
+v3 = model[ &quot;humble&quot; ]
+
+# Measure the similarity of &quot;tiny&quot; and &quot;humble&quot; to the word &quot;small&quot;
+for v in [v2,v3]:
+    print cosine_similarity(v1, v)</code></pre>
+</div>
+
+<p>Running this script returns [[ 0.71879274]] and [[ 0.29307675]] respectively, which is to say Word2Vec can recognize that the word <i>small</i> is more similar to <i>tiny</i> than it is to <i>humble</i>. Because Word2Vec allows one to calculate these fine gradations of word similarity, it does a great job calculating the similarity of passages from the Goldsmith training data. The following plot shows the separation achieved by running a modified version of the “Alzahrani algorithm” described above, using this time Word2Vec to measure word similarity:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity" /></p>
+
+<p>As one can see, the Word2Vec similarity measure achieves very promising separation between plagiarized and non-plagiarized passage pairs. By repeating the subwindow method described above, one can identify the critical value wherein separation between plagiarized and non-plagiarized passages is best achieved with a Word2Vec similarity metric:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png" alt="Word2Vec Subwindow Similarity" style="width:100%; height:100%" /></p>
+
+<h4>FEATURE SELECTION: SYNTACTIC SIMILARITY</h4>
+
+<p>Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">[(u&#39;Newton&#39;, u&#39;NNP&#39;), (u&#39;appeared&#39;, u&#39;VBD&#39;),...,(u&#39;amazing&#39;, u&#39;JJ&#39;), (u&#39;.&#39;, u&#39;.&#39;)]
+[(u&#39;Newton&#39;, u&#39;NPP&#39;), (u&#39;parut&#39;, u&#39;V&#39;),...,(u&#39;nouvelle:&#39;, u&#39;CL&#39;),(u&#39;.&#39;, u&#39;.&#39;)]</code></pre>
+</div>
+
+<p>Using these sequences, two similarity metrics were used to measure the similarity between each of the paired passages in the training data. The first measure (on the x-axis below) simply measured the cosine distance between the two POS sequences; the second measure (on the y-axis below) calculated the longest common POS substring between the two passages. As one would expect, plagiarized passages tend to have higher values in both categories:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity" /></p>
+
+<h4>CLASSIFIER RESULTS</h4>
+<p>From the similarity metrics discussed above, I selected a bare-bones set of six features that could be fed to a plagiarism classifier: (1) the aggregate “Alzahrani similarity” score, (2) the maximum six-gram Alzahrani similarity score, (3) the aggregate Word2Vec similarity score, (4) the cosine distance between the part of speech tag sets, (5) the longest common part of speech string, and (6) the longest contiguous common part of speech string. Those values were all represented in a matrix format with one pair of passages per row and one feature per column. Once this matrix was prepared, a small selection of classifiers hosted within Python’s <a href="http://scikit-learn.org/stable/">Scikit Learn</a> library were chosen for comparison. Cross-classifier comparison is valuable, because different classifiers use very different logic to classify observations. The following plot from the Scikit Learn documentation shows that using a common set of input data (the first column below), the various classifiers in the given row classify that data rather differently:</p>
+
+<p><img src="/images/post_images/crosslingual_plagiarism_detection/classifier_comparison.png" alt="Classifier Comparison" style="width:100%" /></p>
+
+<p>In order to avoid prejudging the best classifier for the current task, half a dozen classifiers were selected and evaluated with hold one out tests. That is to say, for each observation in the training data, all other rows were used to train the given classifier, and the trained classifier was asked to predict whether the left-out observation was a plagiarism or not. Because this is a two class prediction task (each observation either is or is not an instance of plagiarism), the baseline success rate is 50%. Any performance below this baseline would be worse than random guessing. Happily, all of the classifiers achieved success rates that greatly exceeded this baseline value:</p>
+
+<p><img class="centered" src="/images/post_images/crosslingual_plagiarism_detection/classification_results.png" alt="Classification Results" style="width:100%" /></p>
+
+<p>Generally speaking, precision values were higher than recall, perhaps because some of the plagiarisms in the training data were fuzzier than others. Nevertheless, these accuracy values were high enough to warrant further exploration of Goldsmith’s writing. Using the array of features discussed above and others to be discussed in a subsequent post, I tracked down a significant number of plagiarisms that were not part of the training data, including the following outright translations from the Encyclopédie:</p>
+
+<table>
+  <tr><th>French Source</th><th>Goldsmith Text</th></tr>
+
+  <tr><td>Il n'est point douteux que l' Empire , composé d'un grand nombre de membres très-puissans, ne dût être regardé comme un état très-respectable à toute l'Europe, si tous ceux qui le composent concouroient au bien général de leur pays. Mais cet état est sujet à de très-grands inconvéniens: l'autorité du chef n'est point assez grande pour se faire écouter: la crainte, la défiance, la jalousie, regnent continuellement entre les membres: personne ne veut céder en rien à son voisin: les affaires les plus sérieuses les plus importantes pour tout le corps sont quelquefois négligées pour des disputes particulieres, de préséance, d'étiquette, de droits imaginaires d'autres minuties.</td><td>It is not to be doubted but that the empire, composed as it is of several very powerful states, must be considered as a combination that deserves great respect from the other powers of Europe, provided that all the members which compose it would concur in the common good of their country. But the state is subject to very great inconveniences; the authority of the head is not great enough to command obedience; fear, distrust, and jealousy reign continually among the members; none are willing to yield in the least to their neighbours; the most serious and the most important affairs with respect to the community, are often neglected for private disputes, for precedencies, and all the imaginary privileges of misplaced ambition.</td></tr>  
+  
+  <tr><td>L' Eloquence , dit M. de Voltaire, est née avant les regles de la Rhétorique, comme les langues se sont formées avant la Grammaire.</td><td>Thus we see, eloquence is born with us before the rules of rhetoric, as languages have been formed before the rules of grammar.</td></tr>
+  
+  <tr><td>L' empire Germanique, dans l'état où il est aujourd'hui, n'est qu'une portion des états qui étoient soûmis à Charlemagne. Ce prince possédoit la France par droit de succession; il avoit conquis par la force des armes tous les pays situés depuis le Danube jusqu'à la mer Baltique; il y réunit le royaume de Lombardie, la ville de Rome son territoire, ainsi que l'exarchat de Ravennes, qui étoient presque les seuls domaines qui restassent en Occident aux empereurs de Constantinople.</td><td>The empire of Germany, in its present state is only a part of those states that were once under the dominion of Charlemagne. This prince was possessed of France by right of succession: he had conquered by force of arms all the countries situated between the Baltic Sea and the Danube. He added to his empire the kingdom of Lombardy, the city of Rome and its territory, together with the exarchate of Ravenna, which were almost the only possessions that remained in the West to the emperors of Constantinople.</td></tr>
+
+  <tr><td>Il n'est point de genre de poésie qui n'ait son caractere particulier; cette diversité, que les anciens  observerent si religieusement, est fondée sur la nature même des sujets imités par les poëtes. Plus leurs imitations sont vraies, mieux ils ont rendu les caracteres qu'ils avoient à exprimer....Ainsi l'églogue ne quitte pas ses chalumeaux pour entonner la trompette, l' élégie n'emprunte point les sublimes accords de la lyre.</td><td>There is no species of poetry that has not its particular character; and this diversity, which the ancients have so religiously observed, is founded in nature itself. The more just their imitations are found, the more perfectly are those characters distinguished. Thus the pastoral never quits his pipe, in order to sound the trumpet; nor does elegy venture to strike the lyre.</td></tr>
+</table>
+
+<h4>CONCLUSION</h4>
+<p>Samuel Johnson once observed that Oliver Goldsmith was “at no pains to fill his mind with knowledge. He transplanted it from one place to another; and it did not settle in his mind; so he could not tell what was his in his own books” (<i>Life of Johnson</i>). Reading the borrowed passages above, one can perhaps understand why Goldsmith struggled to recall what he had written in his books–much of his writing was not really his. As scholars continue to advance the art of detecting textual reuse, we will be better equipped to map these borrowed words at larger and more ambitious scales. For the present, writers like Goldsmith offer plenty of data on which to hone those methods.</p>
+
+<div style="text-align: center">* * *</div>
+<p>This work has benefitted enormously from conversations with a number of others. Antonis Anastasopoulos, David Chiang, Michael Clark, John Dillon, and Kenton Murray of Notre Dame’s Text Analysis Group, and Thom Bartold, Dan Hepp, and Jens Wessling of ProQuest offered key analytic insights, and Mark Olsen and Glenn Roe of the University of Chicago’s ARTFL group shared essential data. I am grateful for the generous help each of you has provided. Code is available <a href="https://github.com/duhaime/detect_reuse">here</a>.</p>
+
+
+  </article>
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/mapping-the-early-english-book-trade">
+        Mapping the Early English Book Trade
+      </a>
+    </h1>
+
+    <time datetime=January 7, 2015" class="date">January 7, 2015</time>
+
+    <!-- Load JQuery and Lightbox -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<script src="/js/lightbox.js"></script>
+
+<p>Historians often call attention to the tremendous influence the 1710 Act of Anne had on the early English book trade. Commonly identified as the origin of modern copyright law, the Act laid the statutory foundations for fixed-term copyright in England, extended the ability to hold such copyrights to all individuals, and eventually toppled the monopoly that London booksellers had held on English printing since the incorporation of the Stationers’ Company in 1557. Reading scholarship on this legal development over the last few months, I became curious to see how well the English Short Title Catalogue (<a href="http://estc.bl.uk/F/?func=file&amp;file_name=login-bl-estc">ESTC</a>) could substantiate some of the claims made in discussions of the Act. The ESTC seemed an ideal resource for this kind of analysis because, as Stephen Tabor has written, it represents “the fullest and most up-to-date bibliographical account of ‘English’ printing (in the broadest sense) for its first 328 years” (<a href="http://muse.jhu.edu/journals/lbt/summary/v008/8.4tabor.html">367</a>). The database lists the authors, titles, imprint lines, publication dates, and many other metadata fields for each of the ~470,000 editions known to have been printed in England or its colonies between 1473 and 1800, and can therefore serve as a helpful resource with which to investigate the relationship between copyright law and literary history in the early modern period.</p>
+
+<p>One of the debates surrounding the Act of Anne concerns the degree to which the statute altered the geography of the English book trade. Prior to the passage of the Act, legal historian Diane Zimmerman notes, the Stationers’ Company dominated the book industry, and because the company’s printers were primarily stationed in London, the book trade was also centered in the metropole. With the passage of the Statute of Anne, however, authors could sell or trade their copyrights to printers outside of London: “Now any printer [or] bookseller, wherever located within the country, could register a copyright with the Company” and “since purchasers of the copies could be located anywhere in the United Kingdom, the Stationers’ Company did not regain its monopoly [on the book trade]” (7). Contra Zimmerman, William Patry argues that the Act of Anne failed to undermine London’s control of the book trade: “After the Statute of Anne, as before,” he writes, “the only purchasers of authors’ works were a small group of London booksellers” (<a href="https://books.google.com/books?id=8-4catWPy84C&amp;q=%22small+group+of+London+booksellers%22#v=snippet&amp;q=%22small%20group%20of%20London%20booksellers%22&amp;f=false">84</a>). To investigate what the ESTC had to say on this question, I compared the geographical distribution of English printers in the half centuries before and after the passage of the Act (click for full size):</p>
+
+<p><a class="img-link-wrapper" href="/images/post_images/mapping_early_english_books/provincial_printing.png" data-lightbox="provincial_printing" data-title="">
+  <img class="img-link" src="/images/post_images/mapping_early_english_books/provincial_printing.png" alt="Provincial Printing" /></a></p>
+
+<p>The usual cautions concerning false imprints and varying survival rates notwithstanding, the ESTC clearly demonstrates the decentralization of English printing in the wake of the Act of Anne. London of course remained the primary site of publication throughout the years covered by the ESTC—publishing two-thirds of all records from the period—though its annual share in the trade fell quite dramatically across the eighteenth century:</p>
+
+<p><a class="centered img-link-wrapper" href="/images/post_images/mapping_early_english_books/london_printing.png" data-lightbox="london_printing" data-title="">
+  <img class="centered img-link" src="/images/post_images/mapping_early_english_books/london_printing.png" alt="London Printing" /></a></p>
+
+<p>One can explain some of that decline by examining the growth of printing in major metropolitan areas outside of London, such as Edinburgh (responsible for 6.5% of total editions in the ESTC), Dublin (5.4%), and Boston (3.7%), which claimed the second, third, and fourth overall largest shares of the book trade according to the ESTC:</p>
+
+<p><a class="centered img-link-wrapper" href="/images/post_images/mapping_early_english_books/publishing_beyond_london.png" data-lightbox="publishing_beyond_london" data-title="">
+  <img class="centered img-link" src="/images/post_images/mapping_early_english_books/publishing_beyond_london.png" alt="Publishing Beyond London" /></a></p>
+
+<p>Among these figures, the explosion of printing in Edinburgh after 1750 is particularly interesting, and appears to be the result of further changes in the legal code. As John Feather notes, “The Copyright Act of 1710 (8 Anne c. 21) implied, but did not state, that it was illegal to import any English-language books into England and Wales if they had been previously printed there” (<a href="/pdf/posts/mapping_early_books/feather_english_book_trade.pdf">58</a>). However, he continues, “the legislation in relation to Scotland seems to have lapsed in 1754-1755,” after which one observes tremendous growth in Scottish printing. Between 1750 and 1755, the five year average of Edinburgh printing as a percent of all printing recorded in the ESTC is 7.5%. This figure only continues to grow after the lapse of Scottish printing regulations noted by Feather: From 1755-1760, Edinburgh printing climbs to 9.0% of all printing for the five year period, from 1760-1765, the figure rises to 12.3%, and from 1765-1770, it reaches 14.4% of the ESTC totals for the five year range. These values are significant, because they suggest the real surge in the Scottish reprinting industry did not take place in the aftermath of the Donaldson v. Becket decision, as is commonly supposed, but rather with the lapse of Scottish reprinting regulations in 1755.</p>
+
+<p>Having plotted the changing geography of early English printing, I was curious to see whether the ESTC could shed new light on the debate concerning anonymous printing in the early modern period. Researchers like Jody Greene have argued that the Statute of Anne was in fact designed to help combat anonymous publishing insofar as it required authors to attach their names to works if they wished to obtain copyright protection for those works (<a href="https://books.google.com/books?id=PFQchrtgYwcC&amp;q=To+claim+responsibility+for+a+work+after+1710&amp;hl=en#v=onepage&amp;q=%22To%20claim%20responsibility%22&amp;f=false">4</a>). Years ago, Michel Foucault pioneered a version of this thesis in his essay “<a href="/pdf/posts/mapping_early_books/focault_what_is_an_author.pdf">What is an Author?</a>”, where he argued that the Act of Anne and its elaboration in eighteenth-century case law spurred the transition from a literary culture founded on anonymity to one founded on named authorship. More recently, however, Robert Griffin disputed such claims, arguing that “the historical record shows . . . there is no necessary relation between copyright and the appearance of the name of the author on the title page” (<a href="https://muse.jhu.edu/journals/new_literary_history/v030/30.4griffin.html">879</a>). To map the changing rate of anonymity over time, I aggregated the number of anonymous and pseudonymous publications as percents of annual totals within the ESTC:</p>
+
+<p><a class="centered img-link-wrapper" href="/images/post_images/mapping_early_english_books/anonymous_publishing.png" data-lightbox="anonymous_publishing" data-title="">
+  <img class="centered img-link" src="/images/post_images/mapping_early_english_books/anonymous_publishing.png" alt="Anonymous Publishing" /></a></p>
+
+<p>The resulting plot shows great fluctuation in anonymous publications within the fifteenth and early sixteenth centuries, largely because of the tremendously small number of publications for those years. In 1492, for instance, the ESTC lists only 14 publications, all but two of which (S111337 and S120825) had identified authors, which results in an aggregate estimate of anonymity for the year of .142, or 14.2 percent. Despite the year to year fluctuations within early records, however, examining anonymity rates in the aggregate leads to legible patterns: one finds a marked decline in anonymous publication rates over the fifteenth and sixteenth centuries, a fairly steady rise across the seventeenth century, and a slow aggregate decline in the wake of the Act of Anne. This data supports some of the the findings of Joad Raymond—who examined a small sample of records from the period and found that “anonymity . . . became increasingly frequent” over the course of the seventeenth century (<a href="https://books.google.com/books?id=DyMjW21HwHwC&amp;q=168#v=onepage&amp;q=%22Other%20changing%20tendencies%22&amp;f=false">168</a>)—while challenging the popular thesis that anonymity thrived with the lapse of the Licensing Act in 1695.</p>
+
+<p>To plot the history of anonymity, though, is to beg a fundamental question: What exactly counts as an anonymous work? While the plot above treats works as anonymous only if their title pages are attributed to pseudonymous figures like “Isaac Bickerstaff” or to no author at all, there are other cases that one might well wish to classify as anonymous works. Consider the range of works attributed to “corporate” authors like the Royal Society of London or the English Parliament. Are works published by these entities anonymous publications? The way one answers this question will of course greatly affect the way one reads the history of anonymity. As a case in point, we could consult the following plot, which shows monarchical and parliamentary publishing during the seventeenth and eighteenth centuries:</p>
+
+<p><a class="centered img-link-wrapper" href="/images/post_images/mapping_early_english_books/parliamentarian_printing.png" data-lightbox="parliamentarian_printing" data-title="">
+  <img class="centered img-link" src="/images/post_images/mapping_early_english_books/parliamentarian_printing.png" alt="Parliamentarian Printing" style="max-width:100%" /></a></p>
+
+<p>The points here represent yearly values, while the regression lines map the smoothed trends over time. For example, the release of the ESTC to which I had access indicates that James I and Charles I published a combined total of 82 works in 1625 (both served as monarch during the year), the English and Scottish Parliaments published a combined total of 4 works during the year, and the year’s total number of publications was 695, which means that monarchical publications account for 11.79 percent of the annual total while parliamentary publications account for only .5 percent  of the same. As one can see, treating the high volume of parliamentary publications from the period as “anonymous works” would create a serious spike in anonymity rates during the English Civil Wars, and would steadily inflate anonymity rates across the eighteenth century. On the other hand, refusing to include works of corporate authorship among anonymous publications (as I have done in the plot of anonymity above) makes it more difficult to answer the question: What exactly counts as anonymity in the early modern world? Whether one includes or excludes corporate authorship from the domain of anonymity, this plot of parliamentary and monarchical publications intrigues me because it maps so neatly onto the political history of the English Civil Wars: monarchical publications trump parliamentary output until the critical years of the early 1640’s, after which the Parliament assumes a predominance it holds throughout the Interregnum and only loses in the Restoration. Thereafter the monarchical voice triumphs until the Statute of Anne, after which point it rapidly loses ground. Examining this plot, I can’t help but wonder: To what extent is monarchical publishing a function of the crown’s political power, and to what extent is that political power a function of the monarch’s proximity to print?</p>
+
+<div style="text-align: center">* * *</div>
+
+<p>I want to thank Benjamin Pauley, Brian Geiger, and Virginia Schilling—each of whom kindly helped me to acquire the ESTC data on which the analysis above was performed—as well as Elliott Visconsi, whose intriguing questions on copyright history continue to motivate my ongoing research.</p>
+
+
+  </article>
+  
+</div>
+
+
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <ul class="social-media-list">
+
+    
+      <a href="https://github.com/duhaime" style="text-decoration: none">
+  <span class="icon icon--github"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span>
+</a>
+
+    
+
+    
+      <a href="https://twitter.com/douglasduhaime" style="text-decoration: none">
+  <span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span>
+</a>
+
+    
+
+    </ul>
+  </div>
+</footer>
+
+
+  </body>
+
+</html>
