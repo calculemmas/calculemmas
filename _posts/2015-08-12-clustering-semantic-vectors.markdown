@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Clustering Semantic Vectors"
+title:  "Clustering Semantic Vectors with Python"
 date:   2015-09-12 10:24:24 -0500
 categories: word-embeddings clustering
 comments: true

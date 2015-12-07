@@ -2,7 +2,7 @@
 layout: post
 title:  "Crosslingual Plagiarism Detection with Scikit-Learn"
 date:   2015-07-19 10:24:24 -0500
-categories: classification digital-humanities
+categories: classification digital-humanities word-embeddings
 comments: true
 ---
 
