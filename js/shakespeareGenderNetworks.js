@@ -135,7 +135,7 @@ function drawNodes(graph, container) {
 
 function drawGraph(graph) { 
     // create svg image
-    var svg  = d3.select("body").select("#circle")
+    var svg  = d3.select("body").select("#shakespeareGenderNetwork")
         .append("svg")
         .attr("width", diameter)
         .attr("height", diameter);

@@ -6,14 +6,14 @@ function select_json(new_json) {
             bottom: 10,
             left: 200
         },
-        width = 700;
-        height = 700;
+        width = 650;
+        height = 650;
 
     var x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 4]).clamp(true),
         c = d3.scale.category10().domain(d3.range(10));
 
-    var svg = d3.select("d3_plot").append("svg")
+    var svg = d3.select("cooccurrencePlot").append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
     .attr("display", "block")
@@ -199,7 +199,7 @@ function select_json(new_json) {
     d3.select('#selected_json').on('change', function() {
             
             // erase old image
-            d3.select("svg").remove(); 
+            d3.select("cooccurrencePlot").select("svg").remove(); 
             
             var new_json = eval(d3.select(this).property('value'));
             select_json(new_json);
