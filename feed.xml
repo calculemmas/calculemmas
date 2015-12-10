@@ -5,12 +5,12 @@
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sat, 05 Dec 2015 15:25:25 -0500</pubDate>
-    <lastBuildDate>Sat, 05 Dec 2015 15:25:25 -0500</lastBuildDate>
+    <pubDate>Wed, 09 Dec 2015 19:28:10 -0500</pubDate>
+    <lastBuildDate>Wed, 09 Dec 2015 19:28:10 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
     
       <item>
-        <title>Clustering Semantic Vectors</title>
+        <title>Clustering Semantic Vectors with Python</title>
         <description>&lt;p&gt;Google’s Word2Vec and Stanford’s GloVe have recently offered two fantastic open source software packages capable of transposing words into a high dimension vector space. In both cases, a vector’s position within the high dimensional space gives a good indication of the word’s semantic class (among other things), and in both cases these vector positions can be used in a variety of applications. In the post below, I’ll discuss one approach you can take to clustering the vectors into coherent semantic groupings.&lt;/p&gt;
 
 &lt;p&gt;Both Word2Vec and GloVe can create vector spaces given a large training corpus, but both maintain pretrained vectors as well. To get started with ~1GB of pretrained vectors from GloVe, one need only run the following lines:&lt;/p&gt;
@@ -309,6 +309,8 @@ for v in [v2,v3]:
         <category>classification</category>
         
         <category>digital-humanities</category>
+        
+        <category>word-embeddings</category>
         
       </item>
     
