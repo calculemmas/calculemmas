@@ -5,85 +5,9 @@
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 14 Dec 2015 23:04:24 -0500</pubDate>
-    <lastBuildDate>Mon, 14 Dec 2015 23:04:24 -0500</lastBuildDate>
+    <pubDate>Mon, 14 Dec 2015 23:11:05 -0500</pubDate>
+    <lastBuildDate>Mon, 14 Dec 2015 23:11:05 -0500</lastBuildDate>
     <generator>Jekyll v3.0.0</generator>
-    
-      <item>
-        <title>Small World Networks in Shakespearean Drama</title>
-        <description>&lt;!-- Cooccurrence css and js --&gt;
-&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;/css/cooccurrence.css&quot; /&gt;
-
-&lt;script type=&quot;text/javascript&quot; src=&quot;https://s3.amazonaws.com/duhaime-shakespeare/js/d3.v2.min.js?2.8.1&quot;&gt;&lt;/script&gt;
-
-&lt;script type=&quot;text/javascript&quot; src=&quot;https://s3.amazonaws.com/duhaime-shakespeare/js/jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;
-
-&lt;aside class=&quot;selection-menu&quot; style=&quot;margin-top:20px;&quot;&gt;
-    &lt;p&gt;Play:
-       &lt;select class=&quot;play-menu form-group select-wrapper form-control&quot; id=&quot;selected_json&quot;&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tro.json&#39;&quot;&gt;Troilus_And_Cressida&lt;/option&gt; 
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MND.json&#39;&quot;&gt;Midsummer-Nights_Dream&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/AWW.json&#39;&quot;&gt;Alls_Well&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ant.json&#39;&quot;&gt;Antony_And_Cleopatra&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Cor.json&#39;&quot;&gt;Coriolanus&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Cym.json&#39;&quot;&gt;Cymbeline&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ham.json&#39;&quot;&gt;Hamlet&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/JC.json&#39;&quot;&gt;Julius_Caesar&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Lr.json&#39;&quot;&gt;King_Lear&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/LLL.json&#39;&quot;&gt;Loves_Labours_Lost&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Mac.json&#39;&quot;&gt;Macbeth&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MM.json&#39;&quot;&gt;Measure_For_Measure&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ado.json&#39;&quot;&gt;Much_Ado&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Oth.json&#39;&quot;&gt;Othello&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Per.json&#39;&quot;&gt;Pericles&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Rom.json&#39;&quot;&gt;Romeo_And_Juliet&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Err.json&#39;&quot;&gt;Comedy_Of_Errors&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Jn.json&#39;&quot;&gt;King_John&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MV.json&#39;&quot;&gt;Merchant_Of_Venice&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Wiv.json&#39;&quot;&gt;Merry_Wives_Of_Windsor&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Shr.json&#39;&quot;&gt;Taming_Of_The_Shrew&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tmp.json&#39;&quot;&gt;Tempest&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TGV.json&#39;&quot;&gt;Two_Gentlemen_Of_Verona&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TNK.json&#39;&quot;&gt;Two_Noble_Kinsmen&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/WT.json&#39;&quot;&gt;Winters_Tale&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tim.json&#39;&quot;&gt;Timon_Of_Athens&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tit.json&#39;&quot;&gt;Titus_Andronicus&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TN.json&#39;&quot;&gt;Twelfth_Night&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/R2.json&#39;&quot;&gt;King_Richard_II&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/R3.json&#39;&quot;&gt;King_Richard_III&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/1H4.json&#39;&quot;&gt;Henry_IV_i&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/2H4.json&#39;&quot;&gt;Henry_IV_ii&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/H5.json&#39;&quot;&gt;King_Henry_V&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/1H6.json&#39;&quot;&gt;Henry_VI_i&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/2H6.json&#39;&quot;&gt;Henry_VI_ii&lt;/option&gt;
-            &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/3H6.json&#39;&quot;&gt;Henry_VI_iii&lt;/option&gt;
-        &lt;/select&gt;   
-    
-    Order:
-        &lt;select id=&quot;order&quot;&gt;
-            &lt;option value=&quot;name&quot;&gt;by Name&lt;/option&gt;
-            &lt;option value=&quot;count&quot;&gt;by Frequency&lt;/option&gt;
-            &lt;option value=&quot;group&quot;&gt;by Cluster&lt;/option&gt;
-        &lt;/select&gt;
-
-&lt;cooccurrenceplot&gt;&lt;/cooccurrenceplot&gt;
-
-&lt;script type=&quot;text/javascript&quot; src=&quot;/js/cooccurrence.js&quot;&gt;&lt;/script&gt;
-
-&lt;/p&gt;
-&lt;/aside&gt;
-
-</description>
-        <pubDate>Tue, 01 Dec 2015 10:24:24 -0500</pubDate>
-        <link>http://yourdomain.com/posts/shakespearean-networks</link>
-        <guid isPermaLink="true">http://yourdomain.com/posts/shakespearean-networks</guid>
-        
-        
-        <category>digital-humanities</category>
-        
-        <category>networks</category>
-        
-      </item>
     
       <item>
         <title>Clustering Semantic Vectors with Python</title>
