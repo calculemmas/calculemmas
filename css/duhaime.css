@@ -634,7 +634,7 @@ table {
   background-color: #f5f2f0;
   font-size: 14px;
   border-collapse: collapse;
-  padding: 5px;
+  padding: 5px 5px 5px;
 }
 
 table td, table th {
