@@ -15,7 +15,6 @@ body.full footer {
 img {
     border: 0;
     max-width: 100%;
-    min-width: 100%;
 }
 header .logo {
     opacity: .75;
@@ -139,8 +138,6 @@ header .logo:hover {
 .content img:not(.emoji) {
   border-radius: 5px
   max-width: 100%;
-  min-width: 100%;
-
 }
 .content li img {
     margin: 0;
