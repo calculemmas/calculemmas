@@ -6,8 +6,8 @@ function select_json(new_json) {
             bottom: 10,
             left: 200
         },
-        width = 650;
-        height = 650;
+        width = 700;
+        height = 700;
 
     var x = d3.scale.ordinal().rangeBands([0, width]),
         z = d3.scale.linear().domain([0, 4]).clamp(true),
@@ -133,7 +133,7 @@ function select_json(new_json) {
                     })
                     .style("fill", function(d) {
                         return nodes[d.x].group == nodes[d.y].group ? c(nodes[d.x].group) : null;
-                    })
+                    }) 
                     .on("mouseover", mouseover)
                     .on("mouseout", mouseout);
             }
@@ -193,7 +193,7 @@ function select_json(new_json) {
     }
 
     // set initial json selection
-    select_json("https://s3.amazonaws.com/duhaime-shakespeare/folger/MND.json");
+    select_json("https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tro.json");
 
     // handle on click event
     d3.select('#selected_json').on('change', function() {
