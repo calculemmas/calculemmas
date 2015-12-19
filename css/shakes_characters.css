@@ -1,5 +1,4 @@
 #characterWords {
-  margin-left: -65px;
   font: 13px sans-serif;
   height: 500px;
 }
@@ -21,7 +20,6 @@
 }
 
 #minMaxEntrance {
-  margin-left: -65px;
   font: 13px sans-serif;
   height: 500px;
 }
@@ -43,7 +41,6 @@
 }
 
 #minMaxWords {
-  margin-left: -100px;
   font: 13px sans-serif;
   height: 500px;
 }

@@ -10,9 +10,9 @@ comments: true
 <script type="text/javascript" src="https://s3.amazonaws.com/duhaime-shakespeare/js/jquery-1.7.2.min.js"></script>
 <link rel="stylesheet" type="text/css" href="css/shakes_characters.css">
 
-Some time ago, I was intrigued to discover that Shakespeare’s Histories have a noticeable lack of female characters [link][previous-shakes-post]. Since then, I’ve been curious to further explore the nuances of Shakespearean characters, paying particular respect to the gender dynamics of the Bard’s plays. This post is a quick sketch of some of the insights to which that curiosity has led.
+Some time ago, I was intrigued to discover that Shakespeare’s Histories have a noticeable lack of female characters [[link]][previous-shakes-post]. Since then, I’ve been curious to further explore the nuances of Shakespearean characters, paying particular respect to the gender dynamics of the Bard’s plays. This post is a quick sketch of some of the insights to which that curiosity has led.
 
-To get a closer look at Shakespeare’s characters, I ran some analysis on the Folger Shakespeare Library’s gold-standard set of Shakespearean texts [link][folger-digital-library], all of which are encoded in fantastic XML markup that captures a number of character-level attributes, including gender. Using that markup, I extracted data for each character in Shakespeare’s plays, and then scoured through those features in search of patterns. All of the characters with an identified gender in this dataset are plotted below (mouseover for character name and source play):
+To get a closer look at Shakespeare’s characters, I ran some analysis on the Folger Shakespeare Library’s gold-standard set of Shakespearean texts [[link]][folger-digital-library], all of which are encoded in fantastic XML markup that captures a number of character-level attributes, including gender. Using that markup, I extracted data for each character in Shakespeare’s plays, and then scoured through those features in search of patterns. All of the characters with an identified gender in this dataset are plotted below (mouseover for character name and source play):
 
 <!-- Words Spoken by Character Entrance Plot -->
 <div id="characterWords"></div>

@@ -6,7 +6,7 @@ d3.json("https://s3.amazonaws.com/duhaime-shakespeare/min_max_words.json", funct
   // specify font spec
   fontSpec = "bold 13pt Arial";
   var margin = {top: 20, right: 20, bottom: 50, left: 75},
-      width = 960 - margin.left - margin.right,
+      width = 750 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
   var x = d3.scale.linear()
       .range([0, width]);
@@ -39,7 +39,7 @@ d3.json("https://s3.amazonaws.com/duhaime-shakespeare/min_max_words.json", funct
       .attr("x", width/2 + 180)
       .attr("y", +45)
       .style("text-anchor", "end")
-      .text("Words spoken by the smallest {male, female} role") 
+      .text("Words spoken by the smallest gendered role") 
       .style("font-size","16px");
   svg.append("g")
       .attr("class", "y axis")
@@ -50,7 +50,7 @@ d3.json("https://s3.amazonaws.com/duhaime-shakespeare/min_max_words.json", funct
       .attr("y", -60)
       .attr("x", -30)
       .style("text-anchor", "end")
-      .text("Words spoken by the largest {male, female} role")
+      .text("Words spoken by the largest gendered role")
       .style("font-size", "16px");
   svg.selectAll(".dot")
       .data(data)

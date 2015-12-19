@@ -18,7 +18,7 @@ d3.json("https://s3.amazonaws.com/duhaime-shakespeare/words_by_entrance.json", f
   var fontSpec = "13pt Arial";
   
   var margin = {top: 20, right: 20, bottom: 50, left: 75},
-      width = 850 - margin.left - margin.right,
+      width = 750 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
   var x = d3.scale.linear()
