@@ -5,9 +5,122 @@
     <description>Working notes on data mining and early book history.</description>
     <link>http://yourdomain.com/</link>
     <atom:link href="http://yourdomain.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Wed, 16 Dec 2015 17:47:41 -0500</pubDate>
-    <lastBuildDate>Wed, 16 Dec 2015 17:47:41 -0500</lastBuildDate>
+    <pubDate>Fri, 18 Dec 2015 12:44:51 -0500</pubDate>
+    <lastBuildDate>Fri, 18 Dec 2015 12:44:51 -0500</lastBuildDate>
     <generator>Jekyll v3.0.1</generator>
+    
+      <item>
+        <title>Visualizing Shakespearean Characters</title>
+        <description>&lt;script src=&quot;//d3js.org/d3.v3.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script type=&quot;text/javascript&quot; src=&quot;https://s3.amazonaws.com/duhaime-shakespeare/js/jquery-1.7.2.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/shakes_characters.css&quot; /&gt;
+
+&lt;p&gt;Some time ago, I was intrigued to discover that Shakespeare’s Histories have a noticeable lack of female characters &lt;a href=&quot;http://douglasduhaime.com/blog/classifying-shakespearean-drama-with-sparse-feature-sets&quot;&gt;[link]&lt;/a&gt;. Since then, I’ve been curious to further explore the nuances of Shakespearean characters, paying particular respect to the gender dynamics of the Bard’s plays. This post is a quick sketch of some of the insights to which that curiosity has led.&lt;/p&gt;
+
+&lt;p&gt;To get a closer look at Shakespeare’s characters, I ran some analysis on the Folger Shakespeare Library’s gold-standard set of Shakespearean texts &lt;a href=&quot;http://www.folgerdigitaltexts.org/&quot;&gt;[link]&lt;/a&gt;, all of which are encoded in fantastic XML markup that captures a number of character-level attributes, including gender. Using that markup, I extracted data for each character in Shakespeare’s plays, and then scoured through those features in search of patterns. All of the characters with an identified gender in this dataset are plotted below (mouseover for character name and source play):&lt;/p&gt;
+
+&lt;!-- Words Spoken by Character Entrance Plot --&gt;
+&lt;div id=&quot;characterWords&quot;&gt;&lt;/div&gt;
+&lt;script src=&quot;/js/shakespearean_characters.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Looking at this plot, we can see that the most prominent characters in Shakespearean drama are almost all well-known, titular males. There is also a noticeable inverse-relationship between a character’s prominence and the point in the play wherein that character is introduced. Looking more closely at the plot, I’ve further noticed that Shakespeare was curiously consistent in his treatment of characters who appear in multiple plays. In both &lt;i&gt;1 Henry IV&lt;/i&gt; and &lt;i&gt;2 Henry IV&lt;/i&gt;, for instance, Falstaff is given ~6,000 words and is introduced only a few hundred words into the work. Looking at the long tail, by contrast, one finds that among the outspoken characters introduced after the ~15,000 word mark—including Westmoreland and Bedford in &lt;i&gt;2 Henry IV&lt;/i&gt;, and Cade, Clifford, and Iden from &lt;i&gt;2 Henry VI&lt;/i&gt;—nearly all hail from Histories.&lt;/p&gt;
+
+&lt;p&gt;While the plot above gives one a birds’ eye view of Shakespeare’s characters, the plot doesn’t make it particularly easy to differentiate male and female character dynamics. As a step in this direction, the plot below visualizes character entrances by gender for each of Shakespeare’s plays:&lt;/p&gt;
+
+&lt;!-- first and last entrance by gender plot --&gt;
+&lt;div id=&quot;minMaxEntrance&quot;&gt;&lt;/div&gt;
+&lt;script async=&quot;&quot; src=&quot;js/min_max_entrances.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Examining at the distribution along the x-axis, we can see that male characters consistently enter the stage before female characters. An exception to this general rule may be found in the Comedies, as plays like &lt;i&gt;Taming of the Shrew&lt;/i&gt;, &lt;i&gt;All’s Well that Ends Well&lt;/i&gt;, and &lt;i&gt;Midsummer Nights’ Dream&lt;/i&gt; begin with female characters on stage. Looking at the distribution along the y-axis, we can also see that for most plays, male characters continue to be introduced on stage long after the last female characters have been introduced.&lt;/p&gt;
+
+&lt;p&gt;Given the plots above, some might conclude that Shakespeare privileged male characters over female characters, as he introduced the former earlier and tended to give them more lines. There is evidence in the plays, however, that points in the opposite direction. Looking at Shakespeare’s minor characters, we see that the smallest and least significant roles in each play were almost universally assigned to males:&lt;/p&gt;
+
+&lt;!-- min and max words by gender plot --&gt;
+&lt;div id=&quot;minMaxWords&quot;&gt;&lt;/div&gt;
+&lt;script async=&quot;&quot; src=&quot;js/min_max_words.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;Here we see that even important males characters such as Fleance in &lt;i&gt;Macbeth&lt;/i&gt; and Cornelius in &lt;i&gt;Hamlet&lt;/i&gt; are given very few lines indeed, and the smallest female roles are consistently given more lines than the smallest male roles.&lt;/p&gt;
+
+&lt;p&gt;In sum, the plots above show that a number of heretofore undisclosed patterns emerge when we analyze Shakespeare’s characters in the aggregate. However, the plots above don’t show the connections between characters. One way to investigate these interconnections is through a co-occurrence matrix, in which each cell represents the degree to which two characters appear on stage concurrently:&lt;/p&gt;
+
+&lt;!-- character cooccurrence plot --&gt;
+&lt;aside class=&quot;selection-menu&quot; style=&quot;margin-top:20px;&quot;&gt;
+    &lt;p&gt;Play:
+        &lt;select class=&quot;play-menu form-group select-wrapper form-control&quot; id=&quot;selected_json&quot;&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/1H4.json&#39;&quot;&gt;Henry_IV_i&lt;/option&gt; 
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ant.json&#39;&quot;&gt;Antony_And_Cleopatra&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MND.json&#39;&quot;&gt;Midsummer-Nights_Dream&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/AWW.json&#39;&quot;&gt;Alls_Well&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Cor.json&#39;&quot;&gt;Coriolanus&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Cym.json&#39;&quot;&gt;Cymbeline&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ham.json&#39;&quot;&gt;Hamlet&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/JC.json&#39;&quot;&gt;Julius_Caesar&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Lr.json&#39;&quot;&gt;King_Lear&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/LLL.json&#39;&quot;&gt;Loves_Labours_Lost&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Mac.json&#39;&quot;&gt;Macbeth&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MM.json&#39;&quot;&gt;Measure_For_Measure&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Ado.json&#39;&quot;&gt;Much_Ado&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Oth.json&#39;&quot;&gt;Othello&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Per.json&#39;&quot;&gt;Pericles&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Rom.json&#39;&quot;&gt;Romeo_And_Juliet&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Err.json&#39;&quot;&gt;Comedy_Of_Errors&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Jn.json&#39;&quot;&gt;King_John&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/MV.json&#39;&quot;&gt;Merchant_Of_Venice&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Wiv.json&#39;&quot;&gt;Merry_Wives_Of_Windsor&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Shr.json&#39;&quot;&gt;Taming_Of_The_Shrew&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tmp.json&#39;&quot;&gt;Tempest&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TGV.json&#39;&quot;&gt;Two_Gentlemen_Of_Verona&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TNK.json&#39;&quot;&gt;Two_Noble_Kinsmen&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/WT.json&#39;&quot;&gt;Winters_Tale&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tim.json&#39;&quot;&gt;Timon_Of_Athens&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tit.json&#39;&quot;&gt;Titus_Andronicus&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/Tro.json&#39;&quot;&gt;Troilus_And_Cressida&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/TN.json&#39;&quot;&gt;Twelfth_Night&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/R2.json&#39;&quot;&gt;King_Richard_II&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/R3.json&#39;&quot;&gt;King_Richard_III&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/2H4.json&#39;&quot;&gt;Henry_IV_ii&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/H5.json&#39;&quot;&gt;King_Henry_V&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/1H6.json&#39;&quot;&gt;Henry_VI_i&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/2H6.json&#39;&quot;&gt;Henry_VI_ii&lt;/option&gt;
+        &lt;option value=&quot;&#39;https://s3.amazonaws.com/duhaime-shakespeare/folger-json/3H6.json&#39;&quot;&gt;Henry_VI_iii&lt;/option&gt;
+    &lt;/select&gt;   
+
+    Order:
+    &lt;select class=&quot;play-menu form-group select-wrapper form-control&quot; id=&quot;order&quot;&gt;
+        &lt;option value=&quot;name&quot;&gt;by Name&lt;/option&gt;
+        &lt;option value=&quot;count&quot;&gt;by Frequency&lt;/option&gt;
+        &lt;option value=&quot;group&quot;&gt;by Cluster&lt;/option&gt;
+        &lt;option value=&quot;gender&quot;&gt;by Gender&lt;/option&gt;
+    &lt;/select&gt;
+    
+    Color:
+    &lt;select id=&quot;colorDropdown&quot;&gt;
+        &lt;option value=&quot;gender&quot;&gt;by Gender&lt;/option&gt;
+        &lt;option value=&quot;cluster&quot;&gt;by Cluster&lt;/option&gt;
+    &lt;/select&gt;
+&lt;/p&gt;
+&lt;/aside&gt;
+
+&lt;div id=&quot;cooccurrence&quot;&gt;&lt;/div&gt;
+&lt;script async=&quot;&quot; src=&quot;js/cooccurrence.js&quot;&gt;&lt;/script&gt;
+
+&lt;p&gt;In this visualization, “Frequency” represents the number of times a character appears on stage, “Gender” is indicated by the markup within the Folger Shakespeare Digital Collection XML (red = female, blue = male, green = unspecified), and “Cluster” reflects the subgroup of characters with whom a given character regularly appears, as determined by a fast greedy modularity ranking algorithm. Interacting with this plot allows one to uncover a number of insights. In the first place, we can see that the Histories consistently feature more “clusters” of characters than do Comedies or Tragedies. That is to say, while Comedies tend to be wildly interconnected affairs, Histories tend to include many small, isolated groups of characters that interact rather little with each other.  Looking at the gender dynamics of these groups, we can also see that in Comedies such as &lt;i&gt;Merry Wives of Windsor&lt;/i&gt; and Histories such as &lt;i&gt;Richard III&lt;/i&gt; and &lt;i&gt;Henry V&lt;/i&gt;, female characters tend to appear on stage together, almost creating a coherent collective over the course of the play.&lt;/p&gt;
+
+&lt;p&gt;Finally, a number of female characters—such as Queen Margaret in &lt;i&gt;2 Henry VI&lt;/i&gt; and Adrianna in &lt;i&gt;Comedy of Errors&lt;/i&gt;—appear on stage more frequently than any other character in their respective plays, despite the fact that they say fewer words than their respective plays&#39; most outspoken characters. That is to say, their visual presence on stage is disproportionate to their verbal presence on stage. This raises a number of questions: To what extent were female characters meant to fulfill the role of a spectacle in Shakespearean drama? It’s difficult to imagine that the male players who acted as females projected authentic feminine voices. Did the limitations of imitative speech help mitigate the number of lines given to these prominent female characters? These and other questions remain to be explored in future work.&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 13 Dec 2015 10:24:24 -0500</pubDate>
+        <link>http://yourdomain.com/posts/visualizing-shakespearean-characters</link>
+        <guid isPermaLink="true">http://yourdomain.com/posts/visualizing-shakespearean-characters</guid>
+        
+        
+        <category>digital-humanities</category>
+        
+        <category>shakespeare</category>
+        
+      </item>
     
       <item>
         <title>Clustering Semantic Vectors with Python</title>
