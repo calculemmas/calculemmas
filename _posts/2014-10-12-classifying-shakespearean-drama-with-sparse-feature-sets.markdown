@@ -68,7 +68,7 @@ Either way, the last trio of plots shows a fairly even distribution of commandin
 
 By analyzing only the length of a play and the number of words women speak in that play, one can start to get reasonably good separation between the genres: comedies tend to be shorter and include more female dialogue, histories tend to be longer and include less female dialogue, and tragedies split provocatively between the upper right and lower left. Reviewing these figures, I can't shake the suspicion that a third dimension of data could unite these divided tragedies. But what would that dimension consist of? 
 
-<div class="center-text">***</div>
+<div class="center-text">* * *</div>
 
 I would like to thank Mike Poston, co-curator of the Folger Digital Text editions used for this analysis, for discussing many of the finer points of the FDT collection with me. In case you want to replicate any of the analysis or assess the assumptions on which it's founded, the scripts are [here][github-scripts].
 
