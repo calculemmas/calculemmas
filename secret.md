@@ -1,6 +1,6 @@
 ---
 layout: page
-title:
+title: Secret
 permalink: /secret/
 ---
 <script src="/js/removeTitle.js"></script>
