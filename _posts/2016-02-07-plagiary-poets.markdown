@@ -2,7 +2,7 @@
 layout: post
 title:  "Plagiary Poets"
 date:   2016-02-06 10:24:24 -0500
-categories: digital-humanities text-reuse d3js
+categories: digital-humanities text-reuse d3js poetry
 comments: true
 ---
 
