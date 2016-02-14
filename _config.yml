@@ -22,7 +22,7 @@ markdown: kramdown
 gems: [jekyll-paginate]
 
 # Pagination settings
-paginate: 5
+paginate: 3
 paginate_path: "/posts/page/:num"
 
 # Disquis comments
