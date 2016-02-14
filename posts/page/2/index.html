@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Cache-control" content="public">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Load favicon -->
+  <link rel="shortcut icon" type="image/png" href="/images/beach-line.png"> 
+
+  <title>Douglas Duhaime - Posts</title>
+  <meta name="description" content="Working notes on data mining and early book history.">
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="/css/duhaime.css" media="screen,projection" />
+
+  <!-- Google Font -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin-ext' rel='stylesheet' type='text/css'>
+
+  <!-- Syntax highlighting and css -->
+  <link rel="stylesheet" type="text/css" href="/css/prism.css">
+
+  <link rel="canonical" href="http://yourdomain.com/posts/page/2/">
+
+  <link rel="alternate" type="application/rss+xml" title="Douglas Duhaime" href="http://yourdomain.com/feed.xml">
+</head>
+
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-71035937-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+  
+  <body> 
+    <div id="coverImage"></div>
+  <div class="hero" style="background-image: url('/images/cover_images/jefferys_banner.png')">
+    <h1 class="display_title">Douglas Duhaime</h1>
+  </div>
+
+  <div class="container menu">
+    <ul>
+      <li><a href="/">Posts</a></li>
+      <li><a href="/about">About</a></li
+      <li><a href="/secret">Secret</a></li>
+    </ul>
+  <hr />
+</div>
+
+    
+    <div class="container content">
+      <div class="posts">
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/crosslingual-plagiarism-detection">
+        Crosslingual Plagiarism Detection with Scikit-Learn
+      </a>
+    </h1>
+
+    <time datetime=July 19, 2015" class="date">July 19, 2015</time>
+
+    <p>Oliver Goldsmith, one of the great poets, playwrights, and historians of science from the Enlightenment, was many things. He was “an idle, orchard-robbing schoolboy; a tuneful but intractable sizar of Trinity; a lounging, loitering, fair-haunting, flute-playing Irish ‘buckeen.’” He was also a brilliant plagiarist. Goldsmith frequently borrowed whole sentences and paragraphs from French <i>philosophes</i> such as Voltaire and Diderot, closely translating their works into his own voluminous books without offering so much as a word that the passages were taken from elsewhere. Over the last several months, I have worked with several others to study the ways Goldsmith adapted and freely translated these source texts into his own writing in order to develop methods that can be used to discover crosslingual text reuse. By outlining below some of the methods that I have found useful within this field of research, the following post attempts to show how automated methods can be used to further advance our understanding of the history of authorship.</p>
+
+<h4>Sample Training Data</h4>
+
+<p>In order to identify the passages within Goldsmith’s corpus that were taken from other writers, I decided to train a machine learning algorithm to differentiate between plagiarisms and non-plagiarisms. To distinguish between these classes of writing, John Dillon and I collected a large number of plagiarized and non-plagiarized passages within Goldsmith’s writing, and provided annotations to identify whether the target passage had been plagiarized or not. Here are a few sample rows from the training data:</p>
+
+<div id="goldsmith-training-table">
+  <table>
+    <tr><th>French Source</th><th>Goldsmith Text</th><th>Plagiarism</th></tr>
+
+    <tr><td>Bothwell eut toute l'insolence qui suit les grands crimes. Il assembla les principaux seigneurs, et leur fit signer un écrit, par lequel il était dit expressément que la reine ne se pouvait dispenser de l'éspouser, puisqu'il l'avait enlevée, et qu'il avait couché avec elle.</td><td>Bothwell was possessed of all the insolence which attends great crimes: he assembled the principal Lords of the state, and compelled them to sign an instrument, purporting, that they judged it the Queen's interest to marry Bothwell, as he had lain with her against her will.</td><td style="text-align: center">1</td></tr>
+  
+    <tr><td>Histoire c'est le récit des faits donnés pour vrais; au contraire de la fable, qui est le récit des faits donnés pour faux.</td><td>In the early part of history a want of real facts hath induced many to spin out the little that was known with conjecture.</td><td style="text-align: center">0</td></tr>
+
+    <tr><td>La meilleure maniere de connoître l'usage qu'on doit faire de l' esprit, est de lire le petit nombre de bons ouvravrages de génie qu'on a dans les langues savantes &amp; dans la nôtre.</td><td>The best method of knowing the true use to be made of wit is, by reading the small number of good works, both in the learned languages, and in our own.</td><td style="text-align: center">1</td></tr>  
+    <tr><td>Comme il y a en Peinture différentes écoles, il y en a aussi en Sculpture, en Architecture, en Musique, &amp; en général dans tous les beaux Arts.</td><td>A school in the polite arts, properly signifies, that succession of artists which has learned the principles of the art from some eminent master, either by hearing his lessons, or studying his works.</td><td style="text-align: center">0</td></tr>  
+  
+    <tr><td>Des étoiles qui tombent, des montagnes qui se fendent, des fleuves qui reculent, le Soleil &amp; la Lune qui se dissolvent, des comparaisons fausses &amp; gigantesques, la nature toûjours outrée, sont le caractere de ces écrivains, parce que dans ces pays où l'on n'a jamais parlé en public.</td><td>Falling stars, splitting mountains, rivers flowing to their sources, the sun and moon dissolving, false and unnatural comparisons, and nature everywhere exaggerated, form the character of these writers; and this arises from their never, in these countries, being permitted to speak in public.</td><td style="text-align: center">1</td></tr>
+
+  </table>
+</div>
+
+<p>Given this training data, the goal was to identify some features that commonly appear in Goldsmith’s plagiarized passages but don’t commonly appear in his non-plagiarized passages. If we could derive a set of features that differentiate between these two classes, we would be ready to search through Goldsmith’s corpus and tease out only those passages that had been borrowed from elsewhere.</p>
+
+<h4>FEATURE SELECTION: ALZAHRANI SIMILARITY</h4>
+
+<p>Because a plagiarized passage can be expected to have language that is similar but not necessarily identical to the language used within the plagiarized source text, I decided to test some fuzzy string similarity measures. One of the more promising leads on this front was adapted from the work of Salha M. Alzahrani et al. [2012], who has produced a number of great papers on plagiarism detection. The specific similarity measure adapted from Alzahrani calculates the similarity between two passages (call them Passage A and Passage B) in the following way:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">def alzahrani_similarity( a_passage, b_passage ):
+
+    # Create a similarity counter and set its value to zero
+    similarity = 0
+
+    # For each word in Passage A
+    for a_word in a_passage:
+
+        # If that word is in Passage B
+        if a_word in b_passage:
+
+            # Add one to the similarity counter
+            similarity += 1
+
+        # Otherwise,
+        else:
+
+            # For each word in Passage B
+            for b_word in b_passage:    
+
+                # If the current word from Passage A is a synonym of the current word from Passage B,
+                if a_word in find_synonyms( b_word ):
+
+                    # Add one half to the similarity counter
+                    similarity += .5
+                    break
+
+    # Finally, divide the similarity score by the number of words in the longer passage
+    return similarity / max( len(a_passage), len(b_passage) )</code></pre>
+</div>
+
+<p>To prepare the data for this algorithm, I used the <a href="http://pythonhosted.org/goslate/">Google Translate API</a> to translate French texts into English, the <a href="https://words.bighugelabs.com/api.php">Big Huge Labs Thesaurus API</a> to collect synonyms for each word in Passage B, and the <a href="http://www.nltk.org/">NLTK</a> to clean the resulting texts (dropping stop words, removing punctuation, etc.). Once these resources were prepared, I used an implementation of the algorithm described above to calculate the “similarity” between the paired passages in the training data. As one can see, the similarity value returned by this algorithm discriminates reasonably well between plagiarized and non-plagiarized passages:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_aggregate.png" alt="Alzahrani Similarity" /></p>
+
+<p>The y-axis here is discrete–each data point represents either a plagiarized pair of passages (such as those in the training data discussed above), or a non-plagiarized pair of passages. The x-axis is really the important axis. The further to the right a point falls on this axis, the greater the length-normalized similarity score for the passage pair. As one would expect, plagiarized passages have much higher similarity scores than non-plagiarized passages.</p>
+
+<p>In order to investigate how sensitive this similarity method is to passage length, I iterated over all sub-windows of <i>n</i> words within the training data, and used the same similarity method to calculate the similarity of the sub-window within the text. When <i>n</i> is five, for instance, one would compare the first five words of Passage A to the first five from Passage B. After storing that value, one would compare words two through six from Passage A to words one through five of Passage B, then words three through seven from Passage A to words one through five of Passage B, proceeding in this way until all five-word windows had been compared. Once all of these five-word scores are calculated, only the maximum score is retained, and the rest are discarded. The following plot shows that as the number of words in the sub-window increases, the separation between plagiarized and non-plagiarized passages also increases:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/alzahrani_subwindows.png" alt="Alzahrani Similarity Subwindows" style="width:100%; height:100%" /></p>
+
+<h4>FEATURE SELECTION: WORD2VEC SIMILARITY</h4>
+<p>Although the method discussed above provides helpful separation between plagiarized and non-plagiarized passages, it reduces word pairs to one of three states: equivalent, synonymous, and irrelevant. Intuitively, this model feels limited, because one senses that words can have <i>degrees</i> of similarity. Consider the words <i>small</i>, <i>tiny</i>, and <i>humble</i>. The thesaurus discussed above identifies these terms as synonyms, and the algorithm described above essentially treats the words as interchangeable synonyms. This is slightly unsatisfying because the word <i>small</i> seems more similar to the word <i>tiny</i> than the word <i>humble</i>.</p>
+
+<p>To capture some of these finer gradations in meaning, I called on <a href="https://code.google.com/p/word2vec/">Word2Vec</a>, a method that uses backpropagation to represent words in high-dimensional vector spaces. Once a word has been transposed into this vector space, one can compare a word’s vector to another word’s vector and obtain a measure of the similarity of those words. The following snippet, for instance, uses a cosine distance metric to measure the degree to which tiny and humble are similar to the word small:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">from gensim.models.word2vec import Word2Vec
+from sklearn.metrics.pairwise import cosine_similarity        
+
+# Load the Google pretrained word vectors
+model = Word2Vec.load_word2vec_format(&#39;../google_pretrained_word_vectors/GoogleNews-vectors-negative300.bin.gz&#39;, binary=True)
+
+# Obtain the vector representations of three words
+v1 = model[ &quot;small&quot; ]
+v2 = model[ &quot;tiny&quot; ]
+v3 = model[ &quot;humble&quot; ]
+
+# Measure the similarity of &quot;tiny&quot; and &quot;humble&quot; to the word &quot;small&quot;
+for v in [v2,v3]:
+    print cosine_similarity(v1, v)</code></pre>
+</div>
+
+<p>Running this script returns [[ 0.71879274]] and [[ 0.29307675]] respectively, which is to say Word2Vec can recognize that the word <i>small</i> is more similar to <i>tiny</i> than it is to <i>humble</i>. Because Word2Vec allows one to calculate these fine gradations of word similarity, it does a great job calculating the similarity of passages from the Goldsmith training data. The following plot shows the separation achieved by running a modified version of the “Alzahrani algorithm” described above, using this time Word2Vec to measure word similarity:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_aggregate.png" alt="Word2Vec Similarity" /></p>
+
+<p>As one can see, the Word2Vec similarity measure achieves very promising separation between plagiarized and non-plagiarized passage pairs. By repeating the subwindow method described above, one can identify the critical value wherein separation between plagiarized and non-plagiarized passages is best achieved with a Word2Vec similarity metric:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/word2vec_subwindows.png" alt="Word2Vec Subwindow Similarity" style="width:100%; height:100%" /></p>
+
+<h4>FEATURE SELECTION: SYNTACTIC SIMILARITY</h4>
+
+<p>Much like the semantic features discussed above, syntactic similarity can also serve as a clue of plagiarism. While a thoroughgoing pursuit of syntactic features might lead one deep into sophisticated analysis of dependency trees, it turns out one can get reasonable results by simply examining the distribution of part of speech tags within Goldsmith’s plagiarisms and their source texts. Using the Stanford Part of Speech (POS) Tagger’s French and English models, and a custom mapping I put together to link the French POS tags to the universal tagset, I transformed each of the paired passages in the training data into a POS sequence such as the following:</p>
+
+<div>
+  <pre data-line=""><code class="language-python">[(u&#39;Newton&#39;, u&#39;NNP&#39;), (u&#39;appeared&#39;, u&#39;VBD&#39;),...,(u&#39;amazing&#39;, u&#39;JJ&#39;), (u&#39;.&#39;, u&#39;.&#39;)]
+[(u&#39;Newton&#39;, u&#39;NPP&#39;), (u&#39;parut&#39;, u&#39;V&#39;),...,(u&#39;nouvelle:&#39;, u&#39;CL&#39;),(u&#39;.&#39;, u&#39;.&#39;)]</code></pre>
+</div>
+
+<p>Using these sequences, two similarity metrics were used to measure the similarity between each of the paired passages in the training data. The first measure (on the x-axis below) simply measured the cosine distance between the two POS sequences; the second measure (on the y-axis below) calculated the longest common POS substring between the two passages. As one would expect, plagiarized passages tend to have higher values in both categories:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/syntax.png" alt="Syntactic Similarity" /></p>
+
+<h4>CLASSIFIER RESULTS</h4>
+<p>From the similarity metrics discussed above, I selected a bare-bones set of six features that could be fed to a plagiarism classifier: (1) the aggregate “Alzahrani similarity” score, (2) the maximum six-gram Alzahrani similarity score, (3) the aggregate Word2Vec similarity score, (4) the cosine distance between the part of speech tag sets, (5) the longest common part of speech string, and (6) the longest contiguous common part of speech string. Those values were all represented in a matrix format with one pair of passages per row and one feature per column. Once this matrix was prepared, a small selection of classifiers hosted within Python’s <a href="http://scikit-learn.org/stable/">Scikit Learn</a> library were chosen for comparison. Cross-classifier comparison is valuable, because different classifiers use very different logic to classify observations. The following plot from the Scikit Learn documentation shows that using a common set of input data (the first column below), the various classifiers in the given row classify that data rather differently:</p>
+
+<p><img src="/images/post_images/crosslingual_plagiarism_detection/classifier_comparison.png" alt="Classifier Comparison" style="width:100%" /></p>
+
+<p>In order to avoid prejudging the best classifier for the current task, half a dozen classifiers were selected and evaluated with hold one out tests. That is to say, for each observation in the training data, all other rows were used to train the given classifier, and the trained classifier was asked to predict whether the left-out observation was a plagiarism or not. Because this is a two class prediction task (each observation either is or is not an instance of plagiarism), the baseline success rate is 50%. Any performance below this baseline would be worse than random guessing. Happily, all of the classifiers achieved success rates that greatly exceeded this baseline value:</p>
+
+<p><img class="center-image" src="/images/post_images/crosslingual_plagiarism_detection/classification_results.png" alt="Classification Results" style="width:100%" /></p>
+
+<p>Generally speaking, precision values were higher than recall, perhaps because some of the plagiarisms in the training data were fuzzier than others. Nevertheless, these accuracy values were high enough to warrant further exploration of Goldsmith’s writing. Using the array of features discussed above and others to be discussed in a subsequent post, I tracked down a significant number of plagiarisms that were not part of the training data, including the following outright translations from the Encyclopédie:</p>
+
+<table>
+  <tr><th>French Source</th><th>Goldsmith Text</th></tr>
+
+  <tr><td>Il n'est point douteux que l' Empire , composé d'un grand nombre de membres très-puissans, ne dût être regardé comme un état très-respectable à toute l'Europe, si tous ceux qui le composent concouroient au bien général de leur pays. Mais cet état est sujet à de très-grands inconvéniens: l'autorité du chef n'est point assez grande pour se faire écouter: la crainte, la défiance, la jalousie, regnent continuellement entre les membres: personne ne veut céder en rien à son voisin: les affaires les plus sérieuses les plus importantes pour tout le corps sont quelquefois négligées pour des disputes particulieres, de préséance, d'étiquette, de droits imaginaires d'autres minuties.</td><td>It is not to be doubted but that the empire, composed as it is of several very powerful states, must be considered as a combination that deserves great respect from the other powers of Europe, provided that all the members which compose it would concur in the common good of their country. But the state is subject to very great inconveniences; the authority of the head is not great enough to command obedience; fear, distrust, and jealousy reign continually among the members; none are willing to yield in the least to their neighbours; the most serious and the most important affairs with respect to the community, are often neglected for private disputes, for precedencies, and all the imaginary privileges of misplaced ambition.</td></tr>  
+  
+  <tr><td>L' Eloquence , dit M. de Voltaire, est née avant les regles de la Rhétorique, comme les langues se sont formées avant la Grammaire.</td><td>Thus we see, eloquence is born with us before the rules of rhetoric, as languages have been formed before the rules of grammar.</td></tr>
+  
+  <tr><td>L' empire Germanique, dans l'état où il est aujourd'hui, n'est qu'une portion des états qui étoient soûmis à Charlemagne. Ce prince possédoit la France par droit de succession; il avoit conquis par la force des armes tous les pays situés depuis le Danube jusqu'à la mer Baltique; il y réunit le royaume de Lombardie, la ville de Rome son territoire, ainsi que l'exarchat de Ravennes, qui étoient presque les seuls domaines qui restassent en Occident aux empereurs de Constantinople.</td><td>The empire of Germany, in its present state is only a part of those states that were once under the dominion of Charlemagne. This prince was possessed of France by right of succession: he had conquered by force of arms all the countries situated between the Baltic Sea and the Danube. He added to his empire the kingdom of Lombardy, the city of Rome and its territory, together with the exarchate of Ravenna, which were almost the only possessions that remained in the West to the emperors of Constantinople.</td></tr>
+
+  <tr><td>Il n'est point de genre de poésie qui n'ait son caractere particulier; cette diversité, que les anciens  observerent si religieusement, est fondée sur la nature même des sujets imités par les poëtes. Plus leurs imitations sont vraies, mieux ils ont rendu les caracteres qu'ils avoient à exprimer....Ainsi l'églogue ne quitte pas ses chalumeaux pour entonner la trompette, l' élégie n'emprunte point les sublimes accords de la lyre.</td><td>There is no species of poetry that has not its particular character; and this diversity, which the ancients have so religiously observed, is founded in nature itself. The more just their imitations are found, the more perfectly are those characters distinguished. Thus the pastoral never quits his pipe, in order to sound the trumpet; nor does elegy venture to strike the lyre.</td></tr>
+</table>
+
+<h4>CONCLUSION</h4>
+<p>Samuel Johnson once observed that Oliver Goldsmith was “at no pains to fill his mind with knowledge. He transplanted it from one place to another; and it did not settle in his mind; so he could not tell what was his in his own books” (<i>Life of Johnson</i>). Reading the borrowed passages above, one can perhaps understand why Goldsmith struggled to recall what he had written in his books–much of his writing was not really his. As scholars continue to advance the art of detecting textual reuse, we will be better equipped to map these borrowed words at larger and more ambitious scales. For the present, writers like Goldsmith offer plenty of data on which to hone those methods.</p>
+
+<div style="text-align: center">* * *</div>
+<p>This work has benefitted enormously from conversations with a number of others. Antonis Anastasopoulos, David Chiang, Michael Clark, John Dillon, and Kenton Murray of Notre Dame’s Text Analysis Group, and Thom Bartold, Dan Hepp, and Jens Wessling of ProQuest offered key analytic insights, and Mark Olsen and Glenn Roe of the University of Chicago’s ARTFL group shared essential data. I am grateful for the generous help each of you has provided. Code is available <a href="https://github.com/duhaime/detect_reuse">here</a>.</p>
+
+
+  </article>
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/mapping-the-early-english-book-trade">
+        Mapping the Early English Book Trade
+      </a>
+    </h1>
+
+    <time datetime=January 7, 2015" class="date">January 7, 2015</time>
+
+    <p>Historians often call attention to the tremendous influence the 1710 Act of Anne had on the early English book trade. Commonly identified as the origin of modern copyright law, the Act laid the statutory foundations for fixed-term copyright in England, extended the ability to hold such copyrights to all individuals, and eventually toppled the monopoly that London booksellers had held on English printing since the incorporation of the Stationers’ Company in 1557. Reading scholarship on this legal development over the last few months, I became curious to see how well the English Short Title Catalogue (<a href="http://estc.bl.uk/F/?func=file&amp;file_name=login-bl-estc">ESTC</a>) could substantiate some of the claims made in discussions of the Act. The ESTC seemed an ideal resource for this kind of analysis because, as Stephen Tabor has written, it represents “the fullest and most up-to-date bibliographical account of ‘English’ printing (in the broadest sense) for its first 328 years” (<a href="http://muse.jhu.edu/journals/lbt/summary/v008/8.4tabor.html">367</a>). The database lists the authors, titles, imprint lines, publication dates, and many other metadata fields for each of the ~470,000 editions known to have been printed in England or its colonies between 1473 and 1800, and can therefore serve as a helpful resource with which to investigate the relationship between copyright law and literary history in the early modern period.</p>
+
+<p>One of the debates surrounding the Act of Anne concerns the degree to which the statute altered the geography of the English book trade. Prior to the passage of the Act, legal historian Diane Zimmerman notes, the Stationers’ Company dominated the book industry, and because the company’s printers were primarily stationed in London, the book trade was also centered in the metropole. With the passage of the Statute of Anne, however, authors could sell or trade their copyrights to printers outside of London: “Now any printer [or] bookseller, wherever located within the country, could register a copyright with the Company” and “since purchasers of the copies could be located anywhere in the United Kingdom, the Stationers’ Company did not regain its monopoly [on the book trade]” (7). Contra Zimmerman, William Patry argues that the Act of Anne failed to undermine London’s control of the book trade: “After the Statute of Anne, as before,” he writes, “the only purchasers of authors’ works were a small group of London booksellers” (<a href="https://books.google.com/books?id=8-4catWPy84C&amp;q=%22small+group+of+London+booksellers%22#v=snippet&amp;q=%22small%20group%20of%20London%20booksellers%22&amp;f=false">84</a>). To investigate what the ESTC had to say on this question, I compared the geographical distribution of English printers in the half centuries before and after the passage of the Act (click for full size):</p>
+
+<p><a class="img-link-wrapper" href="/images/post_images/mapping_early_english_books/provincial_printing.png" data-lightbox="provincial_printing" data-title="">
+  <img class="img-link" src="/images/post_images/mapping_early_english_books/provincial_printing.png" alt="Provincial Printing" /></a></p>
+
+<p>The usual cautions concerning false imprints and varying survival rates notwithstanding, the ESTC clearly demonstrates the decentralization of English printing in the wake of the Act of Anne. London of course remained the primary site of publication throughout the years covered by the ESTC—publishing two-thirds of all records from the period—though its annual share in the trade fell quite dramatically across the eighteenth century:</p>
+
+<p><a class="center-image img-link-wrapper" href="/images/post_images/mapping_early_english_books/london_printing.png" data-lightbox="london_printing" data-title="">
+  <img class="center-image img-link" src="/images/post_images/mapping_early_english_books/london_printing.png" alt="London Printing" /></a></p>
+
+<p>One can explain some of that decline by examining the growth of printing in major metropolitan areas outside of London, such as Edinburgh (responsible for 6.5% of total editions in the ESTC), Dublin (5.4%), and Boston (3.7%), which claimed the second, third, and fourth overall largest shares of the book trade according to the ESTC:</p>
+
+<p><a class="center-image img-link-wrapper" href="/images/post_images/mapping_early_english_books/publishing_beyond_london.png" data-lightbox="publishing_beyond_london" data-title="">
+  <img class="center-image img-link" src="/images/post_images/mapping_early_english_books/publishing_beyond_london.png" alt="Publishing Beyond London" /></a></p>
+
+<p>Among these figures, the explosion of printing in Edinburgh after 1750 is particularly interesting, and appears to be the result of further changes in the legal code. As John Feather notes, “The Copyright Act of 1710 (8 Anne c. 21) implied, but did not state, that it was illegal to import any English-language books into England and Wales if they had been previously printed there” (<a href="/assets/pdf/posts/mapping_early_books/feather_english_book_trade.pdf">58</a>). However, he continues, “the legislation in relation to Scotland seems to have lapsed in 1754-1755,” after which one observes tremendous growth in Scottish printing. Between 1750 and 1755, the five year average of Edinburgh printing as a percent of all printing recorded in the ESTC is 7.5%. This figure only continues to grow after the lapse of Scottish printing regulations noted by Feather: From 1755-1760, Edinburgh printing climbs to 9.0% of all printing for the five year period, from 1760-1765, the figure rises to 12.3%, and from 1765-1770, it reaches 14.4% of the ESTC totals for the five year range. These values are significant, because they suggest the real surge in the Scottish reprinting industry did not take place in the aftermath of the Donaldson v. Becket decision, as is commonly supposed, but rather with the lapse of Scottish reprinting regulations in 1755.</p>
+
+<p>Having plotted the changing geography of early English printing, I was curious to see whether the ESTC could shed new light on the debate concerning anonymous printing in the early modern period. Researchers like Jody Greene have argued that the Statute of Anne was in fact designed to help combat anonymous publishing insofar as it required authors to attach their names to works if they wished to obtain copyright protection for those works (<a href="https://books.google.com/books?id=PFQchrtgYwcC&amp;q=To+claim+responsibility+for+a+work+after+1710&amp;hl=en#v=onepage&amp;q=%22To%20claim%20responsibility%22&amp;f=false">4</a>). Years ago, Michel Foucault pioneered a version of this thesis in his essay “<a href="/pdf/posts/mapping_early_books/focault_what_is_an_author.pdf">What is an Author?</a>”, where he argued that the Act of Anne and its elaboration in eighteenth-century case law spurred the transition from a literary culture founded on anonymity to one founded on named authorship. More recently, however, Robert Griffin disputed such claims, arguing that “the historical record shows . . . there is no necessary relation between copyright and the appearance of the name of the author on the title page” (<a href="https://muse.jhu.edu/journals/new_literary_history/v030/30.4griffin.html">879</a>). To map the changing rate of anonymity over time, I aggregated the number of anonymous and pseudonymous publications as percents of annual totals within the ESTC:</p>
+
+<p><a class="center-image img-link-wrapper" href="/images/post_images/mapping_early_english_books/anonymous_publishing.png" data-lightbox="anonymous_publishing" data-title="">
+  <img class="center-image img-link" src="/images/post_images/mapping_early_english_books/anonymous_publishing.png" alt="Anonymous Publishing" /></a></p>
+
+<p>The resulting plot shows great fluctuation in anonymous publications within the fifteenth and early sixteenth centuries, largely because of the tremendously small number of publications for those years. In 1492, for instance, the ESTC lists only 14 publications, all but two of which (S111337 and S120825) had identified authors, which results in an aggregate estimate of anonymity for the year of .142, or 14.2 percent. Despite the year to year fluctuations within early records, however, examining anonymity rates in the aggregate leads to legible patterns: one finds a marked decline in anonymous publication rates over the fifteenth and sixteenth centuries, a fairly steady rise across the seventeenth century, and a slow aggregate decline in the wake of the Act of Anne. This data supports some of the the findings of Joad Raymond—who examined a small sample of records from the period and found that “anonymity . . . became increasingly frequent” over the course of the seventeenth century (<a href="https://books.google.com/books?id=DyMjW21HwHwC&amp;q=168#v=onepage&amp;q=%22Other%20changing%20tendencies%22&amp;f=false">168</a>)—while challenging the popular thesis that anonymity thrived with the lapse of the Licensing Act in 1695.</p>
+
+<p>To plot the history of anonymity, though, is to beg a fundamental question: What exactly counts as an anonymous work? While the plot above treats works as anonymous only if their title pages are attributed to pseudonymous figures like “Isaac Bickerstaff” or to no author at all, there are other cases that one might well wish to classify as anonymous works. Consider the range of works attributed to “corporate” authors like the Royal Society of London or the English Parliament. Are works published by these entities anonymous publications? The way one answers this question will of course greatly affect the way one reads the history of anonymity. As a case in point, we could consult the following plot, which shows monarchical and parliamentary publishing during the seventeenth and eighteenth centuries:</p>
+
+<p><a class="center-image img-link-wrapper" href="/images/post_images/mapping_early_english_books/parliamentarian_printing.png" data-lightbox="parliamentarian_printing" data-title="">
+  <img class="center-image img-link" src="/images/post_images/mapping_early_english_books/parliamentarian_printing.png" alt="Parliamentarian Printing" style="max-width:100%" /></a></p>
+
+<p>The points here represent yearly values, while the regression lines map the smoothed trends over time. For example, the release of the ESTC to which I had access indicates that James I and Charles I published a combined total of 82 works in 1625 (both served as monarch during the year), the English and Scottish Parliaments published a combined total of 4 works during the year, and the year’s total number of publications was 695, which means that monarchical publications account for 11.79 percent of the annual total while parliamentary publications account for only .5 percent  of the same. As one can see, treating the high volume of parliamentary publications from the period as “anonymous works” would create a serious spike in anonymity rates during the English Civil Wars, and would steadily inflate anonymity rates across the eighteenth century. On the other hand, refusing to include works of corporate authorship among anonymous publications (as I have done in the plot of anonymity above) makes it more difficult to answer the question: What exactly counts as anonymity in the early modern world? Whether one includes or excludes corporate authorship from the domain of anonymity, this plot of parliamentary and monarchical publications intrigues me because it maps so neatly onto the political history of the English Civil Wars: monarchical publications trump parliamentary output until the critical years of the early 1640’s, after which the Parliament assumes a predominance it holds throughout the Interregnum and only loses in the Restoration. Thereafter the monarchical voice triumphs until the Statute of Anne, after which point it rapidly loses ground. Examining this plot, I can’t help but wonder: To what extent is monarchical publishing a function of the crown’s political power, and to what extent is that political power a function of the monarch’s proximity to print?</p>
+
+<div class="center-text">* * *</div>
+
+<p>I want to thank Benjamin Pauley, Brian Geiger, and Virginia Schilling—each of whom kindly helped me to acquire the ESTC data on which the analysis above was performed—as well as Elliott Visconsi, whose intriguing questions on copyright history continue to motivate my ongoing research.</p>
+
+
+  </article>
+  
+  <article class="post">
+    <h1 class="post-title">
+      <a href="/posts/classifying-shakespearean-drama-with-sparse-feature-sets">
+        Classifing Shakeseparean Drama with Sparse Feature Sets
+      </a>
+    </h1>
+
+    <time datetime=October 12, 2014" class="date">October 12, 2014</time>
+
+    <p>In her fantastic series of lectures on early modern England, Emma Smith identifies an interesting feature that differentiates the tragedies and comedies of Elizabethan drama: “Tragedies tend to have more streamlined plots, or less plot—you know, fewer things happening. Comedies tend to enjoy a multiplication of characters, disguises, and trickeries. I mean, you could partly think about the way [tragedies tend to move] towards the isolation of a single figure on the stage, getting rid of other people, moving towards a kind of solitude, whereas comedies tend to end with a big scene at the end where everybody’s on stage” (<a href="http://podcasts.ox.ac.uk/revengers-tragedy-thomas-middleton">6:02-6:37</a>).</p>
+
+<p>The distinction Smith draws between tragedies and comedies is fairly intuitive: tragedies isolate the poor player that struts and frets his hour upon the stage and then is heard no more. Comedies, on the other hand, <i>aggregate</i> characters in order to facilitate comedic trickery and tidy marriage plots. While this discrepancy seemed promising, I couldn’t help but wonder whether computational analysis would bear out the hypothesis. Inspired by the recent proliferation of computer-assisted genre classifications of Shakespeare’s plays—many of which are founded upon <a href="http://winedarksea.org/?p=40">h</a><a href="http://extra.shu.ac.uk/emls/09-3/hopewhit.htm">i</a><a href="https://www.academia.edu/8108337/Shakespeare_by_the_numbers_on_the_linguistic_texture_of_the_Late_Plays">g</a><a href="http://mcpress.media-commons.org/ShakespeareQuarterly_NewMedia/hope-witmore-the-hundredth-psalm/">h</a> <a href="http://abasu.net/blog/decompiling-shakespeare.html">d</a><a href="http://shakespearequarterly.folger.edu/openreview/?page_id=62">i</a><a href="http://www.matthewjockers.net/2009/02/13/machine-classifying-novels-and-plays-by-genre/">m</a><a href="http://winedarksea.org/?p=1192">e</a><a href="http://winedarksea.org/?p=1799">n</a><a href="https://allistrue.wordpress.com/2010/09/29/this-thing-of-darkness-part-iii/">s</a><a href="https://allistrue.wordpress.com/2010/09/29/this-thing-of-darkness-part-iii/">i</a><a href="http://ullyot.ucalgaryblogs.ca/2012/09/07/data-curation-in-the-networked-humanities/">o</a><a href="http://litlab.stanford.edu/LiteraryLabPamphlet1.pdf">n</a><a href="http://www.mdpi.com/2076-0760/4/3/758">a</a><a href="http://winedarksea.org/?p=600">l</a> data sets like those generated by <a href="http://www.cmu.edu/hss/english/research/docuscope.html">DocuScope</a>—I was curious to know if paying attention to the number of characters on stage in Shakespearean drama could help provide additional feature sets with which to carry out this task.</p>
+
+<p>To pursue the question, I ran some analysis on the Folger Digital Texts edition of the Bard’s plays. This delightful collection uses a custom XML schema to indicate when characters enter and exit the stage, which makes it possible to track the number of characters on stage over the course of a play:</p>
+
+<p><img class="center-image" src="/images/post_images/classifying_shakespearean_drama/tempest.png" /></p>
+
+<p>This visualization of <i>The Tempest</i>, for instance, traces the number of characters on stage from the play’s opening scene—in which the Shipmaster and his Boatswain are quickly joined by Alonso, Sebastian, Antonio, Ferdinand, and Ganzalo—through Prospero’s staff-dashing monologue around the 15,000 word mark to the play’s crowded conclusion. Here are the stagings for the other Shakespearean plays in the FDT canon, ordered by their date of first performance according to Alfred Harbage’s <i>Annals of English Drama</i>:</p>
+
+<p><img class="center-image" src="/images/post_images/classifying_shakespearean_drama/chars_on_stage_all.png" /></p>
+
+<p>These plots afford ample evidence to suggest that Shakespearean comedies tend to end with large scenes in which everybody’s on stage. Unfortunately, many of the comedies and tragedies also end with large gatherings of characters. It therefore seems that the number of characters on stage during a play’s conclusion might not be an ideal feature with which to classify the genres of Shakespeare’s plays.</p>
+
+<p>With these results in hand, I decided to measure how often Shakespeare isolates a single character on stage within plays from each of the three canonical genres. Aggregating the total number of words spoken when only a single character is on stage, as well as the total number of words spoken when only two characters are on stage, and so forth, allows one to measure the degree to which each play distributes its attention between large and small gatherings of characters (click to enlarge):</p>
+
+<div class="inline-trio">
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/comedies.png" data-lightbox="genre-characters" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/comedies.png" alt="Comedies" />
+  </a>
+
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/histories.png" data-lightbox="genre-characters" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/histories.png" alt="Histories" />
+  </a>
+
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/tragedies.png" data-lightbox="genre-characters" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/tragedies.png" alt="Tragedies" />
+  </a>
+</div>
+
+<p>While these plots reveal some interesting features of the works, such as the fact that <i>Two Gentlemen of Verona</i> truly does revolve around dyadic pairs, they make it difficult to compare the amount of time tragedies and comedies feature only a single character on stage. To make this latter comparison, one can find the average amount of time a single character occupies the stage for each genre:</p>
+
+<p><img class="center-image" src="/images/post_images/classifying_shakespearean_drama/means_by_genre.png" /></p>
+
+<p>Surprisingly, the chief difference between the comedies and tragedies has less to do with the way each handles isolated actors on stage than with the way each handles triads and quadrads. It seems tragedies have a greater tendency to revolve around sets of three characters, while comedies are more often organized around sets of four characters. That said, the similarities between the two genres are far more striking than their differences, and far less encouraging for one in search of distinguishing features.</p>
+
+<p>Reflecting on these results, I wondered if tragedies might be better classified by the amount of time their conflicted characters spend addressing the audience. One way to begin measuring the latter, I thought, would be to count the number of words spoken by each character in each play (click to enlarge):</p>
+
+<div class="inline-trio">
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/speakers_comedies.png" data-lightbox="genre-speakers" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/speakers_comedies.png" alt="Comedies" />
+  </a>
+
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/speakers_histories.png" data-lightbox="genre-speakers" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/speakers_histories.png" alt="Histories" />
+  </a>
+
+  <a class="img-link-wrapper" href="/images/post_images/classifying_shakespearean_drama/speakers_tragedies.png" data-lightbox="genre-speakers" data-title="">
+    <img class="img-link" src="/images/post_images/classifying_shakespearean_drama/speakers_tragedies.png" alt="Tragedies" />
+  </a>
+</div>
+
+<p>Analyzing these figures, I was struck by what should have been a fairly obvious fact: Shakespeare’s most memorable characters (Falstaff, Hal, Prospero, Rosalind, Hamlet…) are each given commanding positions within the plays they lead. Given the strong correlation between these memorable characters and the number of lines each speaks, it’s tempting to ask whether we remember these characters most readily simply because Shakespeare allowed them to say the most, or whether Shakespeare allowed them to say the most because he sensed they were his most memorable characters.</p>
+
+<p>Either way, the last trio of plots shows a fairly even distribution of commanding figures among the comedies, histories, and tragedies. But those plots also reveal that the histories include rather few words spoken by women, as well as the fact that the comedies tend to be shorter than the tragedies and histories:</p>
+
+<p><img class="center-image" src="/images/post_images/classifying_shakespearean_drama/female_presence_vs_length.png" /></p>
+
+<p>By analyzing only the length of a play and the number of words women speak in that play, one can start to get reasonably good separation between the genres: comedies tend to be shorter and include more female dialogue, histories tend to be longer and include less female dialogue, and tragedies split provocatively between the upper right and lower left. Reviewing these figures, I can’t shake the suspicion that a third dimension of data could unite these divided tragedies. But what would that dimension consist of?</p>
+
+<div class="center-text">* * *</div>
+
+<p>I would like to thank Mike Poston, co-curator of the Folger Digital Text editions used for this analysis, for discussing many of the finer points of the FDT collection with me. In case you want to replicate any of the analysis or assess the assumptions on which it’s founded, the scripts are <a href="https://github.com/duhaime/mining_the_bard">here</a>.</p>
+
+
+  </article>
+  
+</div>
+
+
+
+<div class="pagination center-text">
+  <ul>
+    
+      
+        <li>
+          <a href="/">&laquo;</a>
+        </li>
+      
+
+    
+
+    
+      <li>
+        <a href="/">1</a>
+      </li>
+    
+    
+      
+        <li class="active">
+          <a href="#">2</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/posts/page/3">3</a>
+        </li>
+      
+    
+      
+        <li>
+          <a href="/posts/page/4">4</a>
+        </li>
+      
+    
+    
+      <li>
+        <a href="/posts/page/3">&raquo;</a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+    </div>
+
+    <footer class="site-footer">
+  <div class="wrapper">
+    <ul class="social-media-list">
+
+    
+      <style>
+.icon--github path {
+  fill: black
+}
+</style>
+
+<a href="https://github.com/duhaime" style="text-decoration: none">
+  <span class="icon icon--github" id="github-icon"><svg viewBox="0 0 16 16"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span>
+</a>
+
+    
+
+    
+      <style>
+.icon--twitter path {
+  fill: #42C0FB 
+}
+</style>
+
+<a href="https://twitter.com/douglasduhaime" style="text-decoration: none">
+  <span class="icon icon--twitter"><svg viewBox="0 0 16 16"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span>
+</a>
+
+    
+
+    </ul>
+  </div>
+</footer>
+
+<!--Load assets here for async behavior-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+<!-- prism js must come after content -->
+<script src="/js/prism.js"></script>
+
+<!-- lightbox assets -->
+<link href="/css/lightbox.css" rel='stylesheet' type='text/css'>
+<script src="/js/lightbox.js"></script>
+
+  </body>
+
+</html>

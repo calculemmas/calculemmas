@@ -205,7 +205,6 @@ h6,
 b,
 strong {
     color: #eb7260;
-    /*font-weight: normal;*/
     font-family: 'Open Sans', sans-serif; font-weight: 700;
     word-break: break-word
 }
@@ -220,7 +219,6 @@ h6 {
 .content h1 {
     line-height: 28px;
     font-size: 28px;
-    /*padding-bottom: 10px*/
 }
 b,
 strong {
@@ -266,16 +264,13 @@ header li {
 .content a:hover {
     border-color: #eb7260
 }
-footer {
-    font-family: 'Open Sans', sans-serif; font-weight: 700;
-    /*font-weight: normal*/
-}
 @media (min-width: 38em) {
     html {
         font-size: 19px
     }
 }
 
+/* ------- images ------- */
 .inline-trio * {
     display: inline-block;
 }
@@ -293,11 +288,7 @@ footer {
    outline-width:0px;
 }
 
-.social-media-list {
-  margin-left: -58px;
-  text-align: center; 
-}
-
+/* ------- center ------- */
 .center-image {
   display: block;
   margin-left: auto;
@@ -308,6 +299,7 @@ footer {
     text-align:center;
 }
 
+/* ------- tables ------- */
 table {
   background-color: #f5f2f0;
   font-size: 14px;
@@ -319,6 +311,12 @@ table td, table th {
   border: 1px solid black;
 }
 
+/* ------- footer ------- */
+.social-media-list {
+  margin-left: -39px;
+  text-align: center; 
+}
+
 .icon > svg {
   display: inline-block;
   width: 16px;
@@ -327,3 +325,60 @@ table td, table th {
     /* override svg fills */
     .icon > svg path { 
       fill: currentColor; } 
+
+/* ------- pagination -------- */
+
+.pagination {
+  height: 36px;
+}
+
+.pagination ul {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.pagination li {
+  display: inline;
+}
+
+.pagination li:first-child a {
+  border-left-width: 1px;
+  -webkit-border-radius: 3px 0 0 3px;
+  -moz-border-radius: 3px 0 0 3px;
+  border-radius: 3px 0 0 3px;
+}
+
+.pagination li:last-child a {
+  -webkit-border-radius: 0 3px 3px 0;
+  -moz-border-radius: 0 3px 3px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.pagination a {
+  float: left;
+  padding: 0 14px;
+  line-height: 34px;
+  border: 1px solid #DDD;
+  border-left-width: 1;
+}
+
+.pagination a:hover, .active a {
+  background-color: whiteSmoke;
+}
+
+.disabled a, .disabled a:hover,
+.active a, .active a:hover {
+  color: #999;
+  cursor: default;
+}
+
+.disabled a:hover {
+  background-color: transparent;
+}
